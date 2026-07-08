@@ -1,0 +1,60 @@
+import type { ProjectSettings } from './types'
+
+export const CANVAS_W = 1920
+export const CANVAS_H = 1080
+export const LABEL_COL_W = 210
+export const HEADER_H = 108
+export const LEGEND_H = 34
+export const FOOTER_H = 260
+
+export const PHASE_HEADER_WEIGHT = 1.7
+
+export const DATA_ROWS = [
+  { key: 'goals', label: 'Ziele & Bedürfnisse', weight: 1 },
+  { key: 'touchpoints', label: 'Touchpoints', weight: 1 },
+  { key: 'emotion', label: 'Emotionen', weight: 1.05 },
+  { key: 'score', label: 'Erlebnis (Score)', weight: 0.8 },
+  { key: 'painPoints', label: 'Pain Points', weight: 1.3 },
+  { key: 'opportunities', label: 'Opportunities', weight: 1.3 },
+  { key: 'recommendations', label: 'Handlungsempfehlungen', weight: 1 },
+] as const
+
+export type RowKey = (typeof DATA_ROWS)[number]['key']
+
+export interface RowBand {
+  key: string
+  label: string
+  top: number
+  height: number
+}
+
+export function computeRowBands(project: ProjectSettings): { header: number; legend: number; footer: number; rowsAreaTop: number; rowsAreaHeight: number; phaseHeaderBand: RowBand; dataBands: RowBand[] } {
+  const legend = project.showLegend ? LEGEND_H : 0
+  const footer = project.showKpi || project.showSummary ? FOOTER_H : 0
+  const rowsAreaTop = HEADER_H + legend
+  const rowsAreaHeight = CANVAS_H - HEADER_H - legend - footer
+
+  const rowMult = project.rowHeight || 1
+  const totalWeight = PHASE_HEADER_WEIGHT + DATA_ROWS.reduce((s, r) => s + r.weight * rowMult, 0)
+
+  let cursor = rowsAreaTop
+  const phaseHeaderHeight = (rowsAreaHeight * PHASE_HEADER_WEIGHT) / totalWeight
+  const phaseHeaderBand: RowBand = { key: 'phaseHeader', label: 'Phasen', top: cursor, height: phaseHeaderHeight }
+  cursor += phaseHeaderHeight
+
+  const dataBands: RowBand[] = DATA_ROWS.map((r) => {
+    const h = (rowsAreaHeight * (r.weight * rowMult)) / totalWeight
+    const band: RowBand = { key: r.key, label: r.label, top: cursor, height: h }
+    cursor += h
+    return band
+  })
+
+  return { header: HEADER_H, legend, footer, rowsAreaTop, rowsAreaHeight, phaseHeaderBand, dataBands }
+}
+
+export function getPhaseCenterX(columnGap: number, phaseCount: number, index: number): number {
+  const totalWidth = CANVAS_W - LABEL_COL_W
+  if (phaseCount <= 0) return LABEL_COL_W
+  const itemWidth = (totalWidth - columnGap * (phaseCount - 1)) / phaseCount
+  return LABEL_COL_W + columnGap * index + itemWidth * (index + 0.5)
+}
