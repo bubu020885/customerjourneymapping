@@ -25,6 +25,16 @@ npm run dev
 npm run build
 ```
 
+## Single-file build (für Hosting ohne Server / z. B. als Artifact)
+
+Erzeugt eine einzige `dist-artifact/index.html` mit allen Assets (JS/CSS)
+inline – lässt sich direkt öffnen oder an einer beliebigen URL hosten, ohne
+weitere Dateien:
+
+```bash
+npm run build:single-file
+```
+
 ## Funktionen
 
 - Journey-Phasen hinzufügen, umbenennen, löschen, per Drag & Drop verschieben
