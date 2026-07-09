@@ -45,4 +45,4 @@ npm run build:single-file
   Bottom Summary
 - Export als PNG/JPG/PDF im festen 16:9-Format, optional in 3840×2160
 - JSON-Import/-Export zum Speichern und Wiederladen einer Journey Map
-- Demo-Datensatz „Schloss Dankern" als Ausgangspunkt
+- Startet mit einem leeren Projekt ohne Beispieldaten

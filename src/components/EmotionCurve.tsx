@@ -26,6 +26,7 @@ export function EmotionCurve({ phases, project }: { phases: Phase[]; project: Pr
       width={CANVAS_W}
       height={bands.rowsAreaHeight}
       viewBox={`0 0 ${CANVAS_W} ${bands.rowsAreaHeight}`}
+      style={{ zIndex: 1 }}
     >
       <path d={path} fill="none" stroke={project.colors.secondary} strokeWidth={2.5} strokeDasharray="7 6" opacity={0.85} />
       {points.map((p, i) => (

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Plus, Download, FileJson, Upload, RotateCcw, FileImage, FileText } from 'lucide-react'
+import { Plus, Download, FileJson, Upload, FileImage, FileText } from 'lucide-react'
 import type { ExportFormat } from '../utils/export'
 
 export function Toolbar({
@@ -7,14 +7,12 @@ export function Toolbar({
   onExport,
   onExportJson,
   onImportJson,
-  onReset,
   exporting,
 }: {
   onAddPhase: () => void
   onExport: (format: ExportFormat, highRes: boolean) => void
   onExportJson: () => void
   onImportJson: (file: File) => void
-  onReset: () => void
   exporting: boolean
 }) {
   const [highRes, setHighRes] = useState(false)
@@ -88,13 +86,6 @@ export function Toolbar({
 
       <div className="flex-1" />
 
-      <button
-        onClick={onReset}
-        className="flex items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-50"
-        title="Demo-Daten laden"
-      >
-        <RotateCcw size={16} /> Demo zurücksetzen
-      </button>
       {exporting && (
         <span className="flex items-center gap-1 text-xs text-amber-600">
           <Download size={14} className="animate-bounce" /> Export läuft…

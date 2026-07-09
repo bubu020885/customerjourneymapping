@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { v4 as uuid } from 'uuid'
 import type { JourneyMapData, Phase, ProjectSettings, KpiData } from '../types'
-import { demoData } from '../data/demoData'
+import { emptyProject } from '../data/emptyProject'
 
 const PALETTE = ['#74486E', '#5B6EAE', '#3E8E8E', '#2E6F6F', '#3E7A4F', '#C97A2B', '#2A8FAE', '#7C8C3E', '#8A3B3B']
 
@@ -21,7 +21,6 @@ interface JourneyState {
   updateProject: (patch: Partial<ProjectSettings>) => void
   updateKpi: (patch: Partial<KpiData>) => void
   loadData: (data: JourneyMapData) => void
-  resetToDemo: () => void
 }
 
 function renumber(phases: Phase[]): Phase[] {
@@ -53,10 +52,10 @@ function createBlankPhase(colorSeed: number): Phase {
 export const useJourneyStore = create<JourneyState>()(
   persist(
     (set, get) => ({
-      project: demoData.project,
-      phases: demoData.phases,
-      kpi: demoData.kpi,
-      selectedPhaseId: demoData.phases[0]?.id ?? null,
+      project: emptyProject.project,
+      phases: emptyProject.phases,
+      kpi: emptyProject.kpi,
+      selectedPhaseId: null,
 
       selectPhase: (id) => set({ selectedPhaseId: id }),
 
@@ -104,14 +103,6 @@ export const useJourneyStore = create<JourneyState>()(
           phases: data.phases,
           kpi: data.kpi,
           selectedPhaseId: data.phases[0]?.id ?? null,
-        }),
-
-      resetToDemo: () =>
-        set({
-          project: demoData.project,
-          phases: demoData.phases,
-          kpi: demoData.kpi,
-          selectedPhaseId: demoData.phases[0]?.id ?? null,
         }),
     }),
     { name: 'journey-map-storage' },

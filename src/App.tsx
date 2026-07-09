@@ -25,7 +25,6 @@ function App() {
     reorderPhases,
     updateProject,
     loadData,
-    resetToDemo,
   } = useJourneyStore()
 
   const [tab, setTab] = useState<Tab>('phase')
@@ -82,7 +81,6 @@ function App() {
         onExport={handleExport}
         onExportJson={handleExportJson}
         onImportJson={handleImportJson}
-        onReset={resetToDemo}
         exporting={exporting}
       />
 

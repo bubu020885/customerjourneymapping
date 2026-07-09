@@ -54,7 +54,7 @@ export const JourneyCanvas = forwardRef<HTMLDivElement, Props>(function JourneyC
 
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={phases.map((p) => p.id)} strategy={horizontalListSortingStrategy}>
-            <div className="relative flex flex-1 min-w-0" style={{ gap: project.columnGap }}>
+            <div className="relative flex flex-1 min-w-0" style={{ gap: project.columnGap, zIndex: 2 }}>
               {phases.map((phase) => (
                 <PhaseColumn
                   key={phase.id}
