@@ -4,15 +4,11 @@ import { CANVAS_W, CANVAS_H } from '../layoutConstants'
 
 export type ExportFormat = 'png' | 'jpg' | 'pdf'
 
-function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 10000)
+export interface ExportResult {
+  blob: Blob
+  url: string
+  filename: string
+  mimeType: string
 }
 
 function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob> {
@@ -27,7 +23,7 @@ function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number)
 
 const DIACRITICS_REGEX = /[̀-ͯ]/g
 
-function slugify(text: string): string {
+export function slugify(text: string): string {
   return (
     text
       .toLowerCase()
@@ -38,8 +34,16 @@ function slugify(text: string): string {
   )
 }
 
-export async function exportCanvas(node: HTMLElement, format: ExportFormat, highRes: boolean, baseName: string) {
-  const filename = slugify(baseName)
+/**
+ * Renders the given node to the requested format and returns a Blob + object URL.
+ * Does not trigger a download itself — some embedded/sandboxed browser contexts
+ * silently swallow script-triggered `<a download>` clicks, so the caller is
+ * expected to both attempt an automatic download AND offer the returned URL as
+ * a manually-clickable link (a genuine user click is far more reliably allowed
+ * to download/open than a script-synthesized one).
+ */
+export async function generateExport(node: HTMLElement, format: ExportFormat, highRes: boolean, baseName: string): Promise<ExportResult> {
+  const baseFilename = slugify(baseName)
   const pixelRatio = highRes ? 3840 / CANVAS_W : 1
   const options = { pixelRatio, backgroundColor: '#ffffff', width: CANVAS_W, height: CANVAS_H, cacheBust: true }
 
@@ -51,17 +55,30 @@ export async function exportCanvas(node: HTMLElement, format: ExportFormat, high
 
   if (format === 'png') {
     const blob = await canvasToBlob(canvas, 'image/png')
-    downloadBlob(blob, `${filename}.png`)
-    return
+    return { blob, url: URL.createObjectURL(blob), filename: `${baseFilename}.png`, mimeType: 'image/png' }
   }
 
   if (format === 'jpg') {
     const blob = await canvasToBlob(canvas, 'image/jpeg', 0.95)
-    downloadBlob(blob, `${filename}.jpg`)
-    return
+    return { blob, url: URL.createObjectURL(blob), filename: `${baseFilename}.jpg`, mimeType: 'image/jpeg' }
   }
 
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [CANVAS_W, CANVAS_H] })
   pdf.addImage(canvas, 'PNG', 0, 0, CANVAS_W, CANVAS_H)
-  pdf.save(`${filename}.pdf`)
+  const blob: Blob = pdf.output('blob')
+  return { blob, url: URL.createObjectURL(blob), filename: `${baseFilename}.pdf`, mimeType: 'application/pdf' }
+}
+
+/** Best-effort automatic download. May silently no-op in sandboxed iframes — not the only path offered to the user. */
+export function tryAutoDownload(result: ExportResult) {
+  try {
+    const a = document.createElement('a')
+    a.href = result.url
+    a.download = result.filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+  } catch {
+    // ignored — the result modal's manual link is the guaranteed fallback
+  }
 }

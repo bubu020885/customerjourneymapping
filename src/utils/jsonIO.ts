@@ -1,15 +1,14 @@
 import type { JourneyMapData } from '../types'
+import { slugify, type ExportResult } from './export'
 
-export function exportJson(data: JourneyMapData, baseName: string) {
+export function generateJsonExport(data: JourneyMapData, baseName: string): ExportResult {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${baseName || 'journey-map'}.json`
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  URL.revokeObjectURL(url)
+  return {
+    blob,
+    url: URL.createObjectURL(blob),
+    filename: `${slugify(baseName)}.json`,
+    mimeType: 'application/json',
+  }
 }
 
 export function importJson(file: File): Promise<JourneyMapData> {

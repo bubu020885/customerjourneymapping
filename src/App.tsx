@@ -5,8 +5,9 @@ import { ScaledStage } from './components/ScaledStage'
 import { PhaseEditor } from './components/PhaseEditor'
 import { GlobalSettings } from './components/GlobalSettings'
 import { Toolbar } from './components/Toolbar'
-import { exportCanvas, type ExportFormat } from './utils/export'
-import { exportJson, importJson } from './utils/jsonIO'
+import { ExportResultModal } from './components/ExportResultModal'
+import { generateExport, tryAutoDownload, type ExportFormat, type ExportResult } from './utils/export'
+import { generateJsonExport, importJson } from './utils/jsonIO'
 
 type Tab = 'phase' | 'global'
 
@@ -29,6 +30,7 @@ function App() {
 
   const [tab, setTab] = useState<Tab>('phase')
   const [exporting, setExporting] = useState(false)
+  const [exportResult, setExportResult] = useState<ExportResult | null>(null)
   const exportRef = useRef<HTMLDivElement>(null)
 
   const selectedPhase = phases.find((p) => p.id === selectedPhaseId) ?? null
@@ -37,13 +39,26 @@ function App() {
     if (!exportRef.current) return
     setExporting(true)
     try {
-      await exportCanvas(exportRef.current, format, highRes, project.title)
+      const result = await generateExport(exportRef.current, format, highRes, project.title)
+      tryAutoDownload(result)
+      setExportResult(result)
     } catch (err) {
       console.error(err)
       alert('Export fehlgeschlagen: ' + (err as Error).message)
     } finally {
       setExporting(false)
     }
+  }
+
+  function handleExportJson() {
+    const result = generateJsonExport({ project, phases, kpi }, project.title)
+    tryAutoDownload(result)
+    setExportResult(result)
+  }
+
+  function closeExportResult() {
+    if (exportResult) URL.revokeObjectURL(exportResult.url)
+    setExportResult(null)
   }
 
   async function handleImportJson(file: File) {
@@ -65,7 +80,7 @@ function App() {
       <Toolbar
         onAddPhase={addPhase}
         onExport={handleExport}
-        onExportJson={() => exportJson({ project, phases, kpi }, project.title)}
+        onExportJson={handleExportJson}
         onImportJson={handleImportJson}
         onReset={resetToDemo}
         exporting={exporting}
@@ -138,6 +153,8 @@ function App() {
           onReorder={() => {}}
         />
       </div>
+
+      {exportResult && <ExportResultModal result={exportResult} onClose={closeExportResult} />}
     </div>
   )
 }
