@@ -1,16 +1,28 @@
-import { toPng, toJpeg } from 'html-to-image'
+import { toCanvas } from 'html-to-image'
 import { jsPDF } from 'jspdf'
 import { CANVAS_W, CANVAS_H } from '../layoutConstants'
 
 export type ExportFormat = 'png' | 'jpg' | 'pdf'
 
-function download(dataUrl: string, filename: string) {
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
-  a.href = dataUrl
+  a.href = url
   a.download = filename
   document.body.appendChild(a)
   a.click()
   a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 10000)
+}
+
+function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('Canvas konnte nicht in eine Datei umgewandelt werden.'))),
+      type,
+      quality,
+    )
+  })
 }
 
 const DIACRITICS_REGEX = /[̀-ͯ]/g
@@ -31,20 +43,25 @@ export async function exportCanvas(node: HTMLElement, format: ExportFormat, high
   const pixelRatio = highRes ? 3840 / CANVAS_W : 1
   const options = { pixelRatio, backgroundColor: '#ffffff', width: CANVAS_W, height: CANVAS_H, cacheBust: true }
 
+  const canvas = await toCanvas(node, options)
+
+  if (canvas.width === 0 || canvas.height === 0) {
+    throw new Error('Die gerenderte Grafik ist leer. Bitte versuche es erneut.')
+  }
+
   if (format === 'png') {
-    const dataUrl = await toPng(node, options)
-    download(dataUrl, `${filename}.png`)
+    const blob = await canvasToBlob(canvas, 'image/png')
+    downloadBlob(blob, `${filename}.png`)
     return
   }
 
   if (format === 'jpg') {
-    const dataUrl = await toJpeg(node, { ...options, quality: 0.95 })
-    download(dataUrl, `${filename}.jpg`)
+    const blob = await canvasToBlob(canvas, 'image/jpeg', 0.95)
+    downloadBlob(blob, `${filename}.jpg`)
     return
   }
 
-  const dataUrl = await toPng(node, options)
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [CANVAS_W, CANVAS_H] })
-  pdf.addImage(dataUrl, 'PNG', 0, 0, CANVAS_W, CANVAS_H)
+  pdf.addImage(canvas, 'PNG', 0, 0, CANVAS_W, CANVAS_H)
   pdf.save(`${filename}.pdf`)
 }

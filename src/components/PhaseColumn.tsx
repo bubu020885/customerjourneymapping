@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Image as ImageIcon, X } from 'lucide-react'
 import type { Phase, ProjectSettings } from '../types'
-import { EMOTION_META } from '../types'
+import { EMOTION_META, DEFAULT_BODY_TEXT_COLOR, DEFAULT_PAIN_POINT_COLOR, DEFAULT_OPPORTUNITY_COLOR } from '../types'
 import { computeRowBands } from '../layoutConstants'
 
 function List({ items, fontSize, color, bullet }: { items: string[]; fontSize: number; color?: string; bullet?: string }) {
@@ -76,18 +76,7 @@ export function PhaseColumn({
           margin: '0 4px',
         }}
       >
-        <div className="flex items-center gap-2 px-2 pt-1.5">
-          {editable && (
-            <button
-              {...attributes}
-              {...listeners}
-              onClick={(e) => e.stopPropagation()}
-              className="opacity-0 group-hover:opacity-70 hover:!opacity-100 cursor-grab active:cursor-grabbing text-white"
-              title="Verschieben"
-            >
-              <GripVertical size={16} />
-            </button>
-          )}
+        <div className="flex items-center gap-1.5 px-2 pt-1.5 pr-6">
           <span
             className="flex items-center justify-center rounded-full font-bold shrink-0"
             style={{
@@ -108,18 +97,6 @@ export function PhaseColumn({
               {phase.subtitle}
             </div>
           </div>
-          {editable && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                onDelete()
-              }}
-              className="opacity-0 group-hover:opacity-70 hover:!opacity-100 text-white shrink-0"
-              title="Phase löschen"
-            >
-              <X size={15} />
-            </button>
-          )}
         </div>
         <div className="flex-1 min-h-0 mx-1.5 mb-1.5 mt-1 rounded overflow-hidden bg-black/10">
           {phase.image ? (
@@ -132,14 +109,43 @@ export function PhaseColumn({
         </div>
       </div>
 
+      {/* Corner overlay controls: positioned relative to the column itself so they are
+          never squeezed out or clipped by the header's own overflow-hidden when many
+          columns make the column narrow. */}
+      {editable && (
+        <>
+          <button
+            {...attributes}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+            className="absolute z-30 left-1 flex items-center justify-center rounded opacity-0 group-hover:opacity-80 hover:!opacity-100 text-white bg-black/25 cursor-grab active:cursor-grabbing"
+            style={{ top: bands.phaseHeaderBand.top + 2, width: 20, height: 20 }}
+            title="Verschieben"
+          >
+            <GripVertical size={13} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onDelete()
+            }}
+            className="absolute z-30 right-1 flex items-center justify-center rounded opacity-0 group-hover:opacity-80 hover:!opacity-100 text-white bg-black/25"
+            style={{ top: bands.phaseHeaderBand.top + 2, width: 20, height: 20 }}
+            title="Phase löschen"
+          >
+            <X size={13} />
+          </button>
+        </>
+      )}
+
       {/* Goals */}
       <Cell band={bands.dataBands[0]}>
-        <List items={phase.goals} fontSize={project.fontSize} />
+        <List items={phase.goals} fontSize={project.fontSize} color={phase.bodyTextColor ?? DEFAULT_BODY_TEXT_COLOR} />
       </Cell>
 
       {/* Touchpoints */}
       <Cell band={bands.dataBands[1]}>
-        <List items={phase.touchpoints} fontSize={project.fontSize} />
+        <List items={phase.touchpoints} fontSize={project.fontSize} color={phase.bodyTextColor ?? DEFAULT_BODY_TEXT_COLOR} />
       </Cell>
 
       {/* Emotion */}
@@ -159,17 +165,22 @@ export function PhaseColumn({
 
       {/* Pain points */}
       <Cell band={bands.dataBands[4]}>
-        <List items={phase.painPoints} fontSize={project.fontSize} color="#c0272d" bullet="✕" />
+        <List items={phase.painPoints} fontSize={project.fontSize} color={phase.painPointColor ?? DEFAULT_PAIN_POINT_COLOR} bullet="✕" />
       </Cell>
 
       {/* Opportunities */}
       <Cell band={bands.dataBands[5]}>
-        <List items={phase.opportunities} fontSize={project.fontSize} color="#1f9d55" bullet="✓" />
+        <List items={phase.opportunities} fontSize={project.fontSize} color={phase.opportunityColor ?? DEFAULT_OPPORTUNITY_COLOR} bullet="✓" />
       </Cell>
 
       {/* Recommendations */}
       <Cell band={bands.dataBands[6]}>
-        <List items={phase.recommendations} fontSize={project.fontSize} color={project.colors.secondary} bullet="→" />
+        <List
+          items={phase.recommendations}
+          fontSize={project.fontSize}
+          color={phase.recommendationColor ?? project.colors.secondary}
+          bullet="→"
+        />
       </Cell>
     </div>
   )

@@ -14,6 +14,7 @@ interface JourneyState {
 
   selectPhase: (id: string | null) => void
   addPhase: () => void
+  insertPhaseAfter: (id: string) => void
   removePhase: (id: string) => void
   updatePhase: (id: string, patch: Partial<Phase>) => void
   reorderPhases: (activeId: string, overId: string) => void
@@ -25,6 +26,28 @@ interface JourneyState {
 
 function renumber(phases: Phase[]): Phase[] {
   return phases.map((p, i) => ({ ...p, number: i + 1 }))
+}
+
+function createBlankPhase(colorSeed: number): Phase {
+  const color = PALETTE[colorSeed % PALETTE.length]
+  return {
+    id: uuid(),
+    number: 0,
+    title: 'Neue Phase',
+    subtitle: 'Zeitraum',
+    image: '',
+    color,
+    accent: '#ffca19',
+    textColor: '#ffffff',
+    description: '',
+    goals: [],
+    touchpoints: [],
+    emotion: 'neutral',
+    score: 5,
+    painPoints: [],
+    opportunities: [],
+    recommendations: [],
+  }
 }
 
 export const useJourneyStore = create<JourneyState>()(
@@ -39,26 +62,17 @@ export const useJourneyStore = create<JourneyState>()(
 
       addPhase: () => {
         const phases = get().phases
-        const color = PALETTE[phases.length % PALETTE.length]
-        const newPhase: Phase = {
-          id: uuid(),
-          number: phases.length + 1,
-          title: 'Neue Phase',
-          subtitle: 'Zeitraum',
-          image: '',
-          color,
-          accent: '#ffca19',
-          textColor: '#ffffff',
-          description: '',
-          goals: [],
-          touchpoints: [],
-          emotion: 'neutral',
-          score: 5,
-          painPoints: [],
-          opportunities: [],
-          recommendations: [],
-        }
-        set({ phases: [...phases, newPhase], selectedPhaseId: newPhase.id })
+        const newPhase = createBlankPhase(phases.length)
+        set({ phases: renumber([...phases, newPhase]), selectedPhaseId: newPhase.id })
+      },
+
+      insertPhaseAfter: (id) => {
+        const phases = [...get().phases]
+        const idx = phases.findIndex((p) => p.id === id)
+        const newPhase = createBlankPhase(phases.length)
+        const insertAt = idx === -1 ? phases.length : idx + 1
+        phases.splice(insertAt, 0, newPhase)
+        set({ phases: renumber(phases), selectedPhaseId: newPhase.id })
       },
 
       removePhase: (id) => {

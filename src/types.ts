@@ -27,7 +27,19 @@ export interface Phase {
   painPoints: string[]
   opportunities: string[]
   recommendations: string[]
+  /** Text color for goals/touchpoints list entries. Falls back to a dark neutral if unset. */
+  bodyTextColor?: string
+  /** Text color for pain point entries. Falls back to red if unset. */
+  painPointColor?: string
+  /** Text color for opportunity entries. Falls back to green if unset. */
+  opportunityColor?: string
+  /** Text color for recommendation entries. Falls back to the project secondary color if unset. */
+  recommendationColor?: string
 }
+
+export const DEFAULT_BODY_TEXT_COLOR = '#1f2937'
+export const DEFAULT_PAIN_POINT_COLOR = '#c0272d'
+export const DEFAULT_OPPORTUNITY_COLOR = '#1f9d55'
 
 export interface ProjectColors {
   primary: string

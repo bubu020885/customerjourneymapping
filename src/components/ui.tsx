@@ -48,18 +48,18 @@ export function ListEditor({ items, onChange, rows = 3 }: { items: string[]; onC
 
 export function ColorInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 min-w-0">
       <input
         type="color"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-8 w-10 rounded border border-gray-300 cursor-pointer bg-transparent"
+        className="h-8 w-10 shrink-0 rounded border border-gray-300 cursor-pointer bg-transparent"
       />
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex-1 rounded-md border border-gray-300 px-2 py-1 text-sm font-mono"
+        className="flex-1 min-w-0 rounded-md border border-gray-300 px-2 py-1 text-sm font-mono"
       />
     </div>
   )
@@ -81,7 +81,7 @@ export function SliderInput({
   suffix?: string
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 min-w-0">
       <input
         type="range"
         value={value}
@@ -89,9 +89,9 @@ export function SliderInput({
         max={max}
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="flex-1"
+        className="flex-1 min-w-0"
       />
-      <span className="text-xs w-12 text-right text-gray-500 tabular-nums">
+      <span className="text-xs w-12 shrink-0 text-right text-gray-500 tabular-nums">
         {value}
         {suffix}
       </span>

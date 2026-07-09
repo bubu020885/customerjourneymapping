@@ -18,6 +18,7 @@ function App() {
     selectedPhaseId,
     selectPhase,
     addPhase,
+    insertPhaseAfter,
     removePhase,
     updatePhase,
     reorderPhases,
@@ -103,7 +104,13 @@ function App() {
           </div>
           <div className="flex-1 min-h-0">
             {tab === 'phase' ? (
-              <PhaseEditor phase={selectedPhase} onChange={(patch) => selectedPhase && updatePhase(selectedPhase.id, patch)} />
+              <PhaseEditor
+                phase={selectedPhase}
+                phaseCount={phases.length}
+                onChange={(patch) => selectedPhase && updatePhase(selectedPhase.id, patch)}
+                onDelete={() => selectedPhase && removePhase(selectedPhase.id)}
+                onInsertAfter={() => selectedPhase && insertPhaseAfter(selectedPhase.id)}
+              />
             ) : (
               <GlobalSettings project={project} onChange={updateProject} />
             )}
@@ -111,8 +118,14 @@ function App() {
         </div>
       </div>
 
-      {/* Hidden full-resolution copy used purely for export rendering */}
-      <div style={{ position: 'fixed', top: 0, left: -100000, pointerEvents: 'none' }} aria-hidden>
+      {/*
+        Hidden full-resolution copy used purely for export rendering.
+        Kept in normal document flow (not an extreme off-screen fixed offset) and merely
+        clipped by a 1x1 overflow-hidden wrapper: some sandboxed/embedded browser contexts
+        skip painting elements placed far outside the viewport via `position: fixed`, which
+        silently produced blank exports. A same-flow clipped box is rendered reliably everywhere.
+      */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: 1, height: 1, overflow: 'hidden', pointerEvents: 'none' }} aria-hidden>
         <JourneyCanvas
           ref={exportRef}
           project={project}
