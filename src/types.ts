@@ -46,7 +46,11 @@ export interface ProjectColors {
   secondary: string
   accent: string
   background: string
+  /** Text color for the row labels in the dark sidebar (Phasen, Ziele & Bedürfnisse, ...). */
+  sidebarText?: string
 }
+
+export const DEFAULT_SIDEBAR_TEXT_COLOR = '#ffffff'
 
 export interface ProjectSettings {
   title: string

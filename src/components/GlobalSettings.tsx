@@ -36,6 +36,12 @@ export function GlobalSettings({ project, onChange }: { project: ProjectSettings
         <Field label="Hintergrundfarbe">
           <ColorInput value={project.colors.background} onChange={(background) => onChange({ colors: { ...project.colors, background } })} />
         </Field>
+        <Field label="Sidebar-Text (Zeilenbeschriftungen)">
+          <ColorInput
+            value={project.colors.sidebarText ?? '#ffffff'}
+            onChange={(sidebarText) => onChange({ colors: { ...project.colors, sidebarText } })}
+          />
+        </Field>
       </div>
 
       <SectionTitle>Layout</SectionTitle>

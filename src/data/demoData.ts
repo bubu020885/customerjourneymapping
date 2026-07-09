@@ -12,6 +12,7 @@ export const demoData: JourneyMapData = {
       secondary: '#ea943f',
       accent: '#ffca19',
       background: '#ffffff',
+      sidebarText: '#ffffff',
     },
     fontSize: 14,
     cardRadius: 12,

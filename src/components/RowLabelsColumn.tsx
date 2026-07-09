@@ -1,5 +1,6 @@
 import { Target, Contact, Heart, Star, AlertTriangle, Rocket, CheckCircle2, Layers } from 'lucide-react'
 import type { ProjectSettings } from '../types'
+import { DEFAULT_SIDEBAR_TEXT_COLOR } from '../types'
 import { LABEL_COL_W, computeRowBands } from '../layoutConstants'
 
 const ICONS: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
@@ -14,6 +15,7 @@ const ICONS: Record<string, React.ComponentType<{ size?: number; className?: str
 
 export function RowLabelsColumn({ project }: { project: ProjectSettings }) {
   const bands = computeRowBands(project)
+  const textColor = project.colors.sidebarText ?? DEFAULT_SIDEBAR_TEXT_COLOR
 
   return (
     <div
@@ -21,8 +23,13 @@ export function RowLabelsColumn({ project }: { project: ProjectSettings }) {
       style={{ width: LABEL_COL_W, background: project.colors.primary }}
     >
       <div
-        className="absolute left-0 right-0 flex items-center gap-2 px-3 font-bold tracking-wide text-white/90 border-b border-white/10"
-        style={{ top: bands.phaseHeaderBand.top - bands.rowsAreaTop, height: bands.phaseHeaderBand.height, fontSize: project.fontSize * 0.9 }}
+        className="absolute left-0 right-0 flex items-center gap-2 px-3 font-bold tracking-wide border-b border-white/10"
+        style={{
+          top: bands.phaseHeaderBand.top - bands.rowsAreaTop,
+          height: bands.phaseHeaderBand.height,
+          fontSize: project.fontSize * 0.9,
+          color: textColor,
+        }}
       >
         <Layers size={project.fontSize * 1.1} />
         PHASEN
@@ -35,7 +42,10 @@ export function RowLabelsColumn({ project }: { project: ProjectSettings }) {
             className="absolute left-0 right-0 flex flex-col items-start justify-center gap-1 px-3 border-b border-white/10"
             style={{ top: band.top - bands.rowsAreaTop, height: band.height }}
           >
-            <div className="flex items-center gap-1.5 text-white/95 font-semibold uppercase" style={{ fontSize: project.fontSize * 0.72 }}>
+            <div
+              className="flex items-center gap-1.5 font-semibold uppercase"
+              style={{ fontSize: project.fontSize * 0.72, color: textColor }}
+            >
               <Icon size={project.fontSize * 0.95} style={{ color: project.colors.accent }} />
               <span>{band.label}</span>
             </div>
