@@ -21,6 +21,7 @@ export const emptyProject: JourneyMapData = {
     showLegend: true,
     showKpi: true,
     showSummary: true,
+    showPhaseImages: true,
   },
   phases: [],
   kpi: {

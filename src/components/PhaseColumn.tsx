@@ -5,6 +5,17 @@ import type { Phase, ProjectSettings } from '../types'
 import { EMOTION_META, DEFAULT_BODY_TEXT_COLOR, DEFAULT_PAIN_POINT_COLOR, DEFAULT_OPPORTUNITY_COLOR } from '../types'
 import { computeRowBands } from '../layoutConstants'
 
+function hexToRgba(hex: string, alpha: number): string {
+  const clean = hex.replace('#', '')
+  const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean
+  const int = parseInt(full, 16)
+  if (Number.isNaN(int) || full.length !== 6) return `rgba(0, 0, 0, ${alpha})`
+  const r = (int >> 16) & 255
+  const g = (int >> 8) & 255
+  const b = int & 255
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
 function List({ items, fontSize, color, bullet }: { items: string[]; fontSize: number; color?: string; bullet?: string }) {
   return (
     <ul className="space-y-0.5 leading-tight w-full" style={{ fontSize: fontSize * 0.72 }}>
@@ -98,15 +109,17 @@ export function PhaseColumn({
             </div>
           </div>
         </div>
-        <div className="flex-1 min-h-0 mx-1.5 mb-1.5 mt-1 rounded overflow-hidden bg-black/10">
-          {phase.image ? (
-            <img src={phase.image} alt={phase.title} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center opacity-50">
-              <ImageIcon size={28} />
-            </div>
-          )}
-        </div>
+        {project.showPhaseImages !== false && (
+          <div className="flex-1 min-h-0 mx-1.5 mb-1.5 mt-1 rounded overflow-hidden bg-black/10">
+            {phase.image ? (
+              <img src={phase.image} alt={phase.title} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center opacity-50">
+                <ImageIcon size={28} />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Corner overlay controls: positioned relative to the column itself so they are
@@ -139,12 +152,12 @@ export function PhaseColumn({
       )}
 
       {/* Goals */}
-      <Cell band={bands.dataBands[0]}>
+      <Cell band={bands.dataBands[0]} tint={phase.color}>
         <List items={phase.goals} fontSize={project.fontSize} color={phase.bodyTextColor ?? DEFAULT_BODY_TEXT_COLOR} />
       </Cell>
 
       {/* Touchpoints */}
-      <Cell band={bands.dataBands[1]}>
+      <Cell band={bands.dataBands[1]} tint={phase.color}>
         <List items={phase.touchpoints} fontSize={project.fontSize} color={phase.bodyTextColor ?? DEFAULT_BODY_TEXT_COLOR} />
       </Cell>
 
@@ -164,17 +177,17 @@ export function PhaseColumn({
       </Cell>
 
       {/* Pain points */}
-      <Cell band={bands.dataBands[4]}>
+      <Cell band={bands.dataBands[4]} tint={phase.color}>
         <List items={phase.painPoints} fontSize={project.fontSize} color={phase.painPointColor ?? DEFAULT_PAIN_POINT_COLOR} bullet="✕" />
       </Cell>
 
       {/* Opportunities */}
-      <Cell band={bands.dataBands[5]}>
+      <Cell band={bands.dataBands[5]} tint={phase.color}>
         <List items={phase.opportunities} fontSize={project.fontSize} color={phase.opportunityColor ?? DEFAULT_OPPORTUNITY_COLOR} bullet="✓" />
       </Cell>
 
       {/* Recommendations */}
-      <Cell band={bands.dataBands[6]}>
+      <Cell band={bands.dataBands[6]} tint={phase.color}>
         <List
           items={phase.recommendations}
           fontSize={project.fontSize}
@@ -190,15 +203,23 @@ function Cell({
   band,
   children,
   center,
+  tint,
 }: {
   band: { top: number; height: number }
   children: React.ReactNode
   center?: boolean
+  tint?: string
 }) {
   return (
     <div
       className={`absolute left-0 right-0 px-2.5 py-1.5 overflow-hidden border-b ${center ? 'flex items-center justify-center' : ''}`}
-      style={{ top: band.top, height: band.height, borderColor: '#e5e7eb', margin: '0 4px' }}
+      style={{
+        top: band.top,
+        height: band.height,
+        borderColor: '#e5e7eb',
+        margin: '0 4px',
+        background: tint ? hexToRgba(tint, 0.08) : undefined,
+      }}
     >
       {children}
     </div>

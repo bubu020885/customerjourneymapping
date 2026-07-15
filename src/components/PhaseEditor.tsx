@@ -1,5 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react'
-import type { Phase, Emotion } from '../types'
+import type { Phase, Emotion, ProjectSettings } from '../types'
 import { EMOTION_META, DEFAULT_BODY_TEXT_COLOR, DEFAULT_PAIN_POINT_COLOR, DEFAULT_OPPORTUNITY_COLOR } from '../types'
 import { Field, TextInput, ListEditor, ColorInput, SliderInput, Select, ImageUpload, SectionTitle } from './ui'
 
@@ -10,12 +10,14 @@ const EMOTION_OPTIONS: { value: Emotion; label: string }[] = (
 export function PhaseEditor({
   phase,
   phaseCount,
+  project,
   onChange,
   onDelete,
   onInsertAfter,
 }: {
   phase: Phase | null
   phaseCount: number
+  project: ProjectSettings
   onChange: (patch: Partial<Phase>) => void
   onDelete: () => void
   onInsertAfter: () => void
@@ -62,9 +64,15 @@ export function PhaseEditor({
         <ListEditor items={[phase.description]} onChange={([description]) => onChange({ description: description ?? '' })} rows={2} />
       </Field>
 
-      <Field label="Einstiegsbild">
-        <ImageUpload value={phase.image} onChange={(image) => onChange({ image })} />
-      </Field>
+      {project.showPhaseImages ? (
+        <Field label="Einstiegsbild">
+          <ImageUpload value={phase.image} onChange={(image) => onChange({ image })} />
+        </Field>
+      ) : (
+        <p className="text-xs text-gray-400">
+          Bilder sind global deaktiviert. Aktiviere sie unter „Globale Einstellungen" → „Anzeige", um ein Einstiegsbild zu hinterlegen.
+        </p>
+      )}
 
       <SectionTitle>Kartenfarben</SectionTitle>
       <Field label="Hintergrund">

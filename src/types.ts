@@ -66,6 +66,7 @@ export interface ProjectSettings {
   showLegend: boolean
   showKpi: boolean
   showSummary: boolean
+  showPhaseImages: boolean
 }
 
 export interface KpiData {

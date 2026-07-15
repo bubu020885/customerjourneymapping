@@ -120,6 +120,7 @@ function App() {
               <PhaseEditor
                 phase={selectedPhase}
                 phaseCount={phases.length}
+                project={project}
                 onChange={(patch) => selectedPhase && updatePhase(selectedPhase.id, patch)}
                 onDelete={() => selectedPhase && removePhase(selectedPhase.id)}
                 onInsertAfter={() => selectedPhase && insertPhaseAfter(selectedPhase.id)}

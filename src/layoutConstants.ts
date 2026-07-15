@@ -7,7 +7,8 @@ export const HEADER_H = 108
 export const LEGEND_H = 34
 export const FOOTER_H = 260
 
-export const PHASE_HEADER_WEIGHT = 1.7
+export const PHASE_HEADER_WEIGHT_WITH_IMAGE = 1.7
+export const PHASE_HEADER_WEIGHT_NO_IMAGE = 0.85
 
 export const DATA_ROWS = [
   { key: 'goals', label: 'Ziele & Bedürfnisse', weight: 1 },
@@ -35,10 +36,11 @@ export function computeRowBands(project: ProjectSettings): { header: number; leg
   const rowsAreaHeight = CANVAS_H - HEADER_H - legend - footer
 
   const rowMult = project.rowHeight || 1
-  const totalWeight = PHASE_HEADER_WEIGHT + DATA_ROWS.reduce((s, r) => s + r.weight * rowMult, 0)
+  const phaseHeaderWeight = project.showPhaseImages !== false ? PHASE_HEADER_WEIGHT_WITH_IMAGE : PHASE_HEADER_WEIGHT_NO_IMAGE
+  const totalWeight = phaseHeaderWeight + DATA_ROWS.reduce((s, r) => s + r.weight * rowMult, 0)
 
   let cursor = rowsAreaTop
-  const phaseHeaderHeight = (rowsAreaHeight * PHASE_HEADER_WEIGHT) / totalWeight
+  const phaseHeaderHeight = (rowsAreaHeight * phaseHeaderWeight) / totalWeight
   const phaseHeaderBand: RowBand = { key: 'phaseHeader', label: 'Phasen', top: cursor, height: phaseHeaderHeight }
   cursor += phaseHeaderHeight
 

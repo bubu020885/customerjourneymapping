@@ -8,6 +8,7 @@ import { Legend } from './Legend'
 import { RowLabelsColumn } from './RowLabelsColumn'
 import { PhaseColumn } from './PhaseColumn'
 import { EmotionCurve } from './EmotionCurve'
+import { ScoreCurve } from './ScoreCurve'
 import { KpiDashboard } from './KpiDashboard'
 
 interface Props {
@@ -71,6 +72,7 @@ export const JourneyCanvas = forwardRef<HTMLDivElement, Props>(function JourneyC
         </DndContext>
 
         <EmotionCurve phases={phases} project={project} />
+        <ScoreCurve phases={phases} project={project} />
       </div>
 
       <KpiDashboard kpi={kpi} phases={phases} project={project} />

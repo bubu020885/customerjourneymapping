@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react'
+import { useState, type ChangeEvent, type DragEvent } from 'react'
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -123,20 +123,43 @@ export function Select<T extends string>({
   )
 }
 
-export function ImageUpload({ value, onChange, label = 'Bild hochladen' }: { value: string; onChange: (v: string) => void; label?: string }) {
-  function handleFile(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
+export function ImageUpload({ value, onChange, label = 'Bild hochladen oder hierher ziehen' }: { value: string; onChange: (v: string) => void; label?: string }) {
+  const [isDragging, setIsDragging] = useState(false)
+
+  function readFile(file: File) {
+    if (!file.type.startsWith('image/')) return
     const reader = new FileReader()
     reader.onload = () => onChange(String(reader.result))
     reader.readAsDataURL(file)
   }
 
+  function handleFile(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) readFile(file)
+  }
+
+  function handleDrop(e: DragEvent<HTMLLabelElement>) {
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file) readFile(file)
+  }
+
   return (
     <div className="flex items-center gap-2">
       {value && <img src={value} alt="" className="h-10 w-10 rounded object-cover border border-gray-200" />}
-      <label className="flex-1 cursor-pointer rounded-md border border-dashed border-gray-300 px-2 py-1.5 text-xs text-gray-500 text-center hover:bg-gray-50">
-        {label}
+      <label
+        onDragOver={(e) => {
+          e.preventDefault()
+          setIsDragging(true)
+        }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={handleDrop}
+        className={`flex-1 cursor-pointer rounded-md border border-dashed px-2 py-1.5 text-xs text-center transition-colors ${
+          isDragging ? 'border-amber-400 bg-amber-50 text-amber-700' : 'border-gray-300 text-gray-500 hover:bg-gray-50'
+        }`}
+      >
+        {isDragging ? 'Bild hier loslassen' : label}
         <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
       </label>
       {value && (

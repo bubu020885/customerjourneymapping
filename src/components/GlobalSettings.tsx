@@ -19,7 +19,7 @@ export function GlobalSettings({ project, onChange }: { project: ProjectSettings
         <TextArea value={project.persona} onChange={(persona) => onChange({ persona })} rows={3} />
       </Field>
       <Field label="Logo">
-        <ImageUpload value={project.logo} onChange={(logo) => onChange({ logo })} label="Logo hochladen" />
+        <ImageUpload value={project.logo} onChange={(logo) => onChange({ logo })} label="Logo hochladen oder hierher ziehen" />
       </Field>
 
       <SectionTitle>CI-Farben</SectionTitle>
@@ -62,6 +62,11 @@ export function GlobalSettings({ project, onChange }: { project: ProjectSettings
       <Toggle checked={project.showLegend} onChange={(showLegend) => onChange({ showLegend })} label="Legende anzeigen" />
       <Toggle checked={project.showKpi} onChange={(showKpi) => onChange({ showKpi })} label="KPI-Bereich anzeigen" />
       <Toggle checked={project.showSummary} onChange={(showSummary) => onChange({ showSummary })} label="Bottom Summary anzeigen" />
+      <Toggle
+        checked={project.showPhaseImages}
+        onChange={(showPhaseImages) => onChange({ showPhaseImages })}
+        label="Bilder pro Phase anzeigen"
+      />
     </div>
   )
 }
