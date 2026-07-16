@@ -28,7 +28,7 @@ export function ScoreCurve({ phases, project }: { phases: Phase[]; project: Proj
     >
       <path d={path} fill="none" stroke={project.colors.secondary} strokeWidth={2.5} strokeDasharray="7 6" opacity={0.85} />
       {points.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={5} fill={project.colors.accent} stroke="white" strokeWidth={1.5} />
+        <circle key={i} cx={p.x} cy={p.y} r={5} fill={project.colors.primary} stroke="white" strokeWidth={1.5} />
       ))}
     </svg>
   )

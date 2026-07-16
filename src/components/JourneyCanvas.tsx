@@ -6,7 +6,6 @@ import { CANVAS_W, CANVAS_H } from '../layoutConstants'
 import { CanvasHeader } from './CanvasHeader'
 import { RowLabelsColumn } from './RowLabelsColumn'
 import { PhaseColumn } from './PhaseColumn'
-import { EmotionCurve } from './EmotionCurve'
 import { ScoreCurve } from './ScoreCurve'
 import { KpiDashboard } from './KpiDashboard'
 
@@ -69,7 +68,6 @@ export const JourneyCanvas = forwardRef<HTMLDivElement, Props>(function JourneyC
           </SortableContext>
         </DndContext>
 
-        <EmotionCurve phases={phases} project={project} />
         <ScoreCurve phases={phases} project={project} />
       </div>
 

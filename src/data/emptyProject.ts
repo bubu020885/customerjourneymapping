@@ -1,4 +1,5 @@
 import type { JourneyMapData } from '../types'
+import { DEFAULT_KPI_HEIGHT } from '../types'
 
 export const emptyProject: JourneyMapData = {
   project: {
@@ -21,12 +22,12 @@ export const emptyProject: JourneyMapData = {
     showKpi: true,
     showSummary: true,
     showPhaseImages: true,
+    kpiHeight: DEFAULT_KPI_HEIGHT,
   },
   phases: [],
   kpi: {
     insightTitle: 'Overall Journey Insight',
     insightText: '',
-    guestEffortScore: 0,
     topPainPoints: [],
     topStrengths: [],
     topLevers: [],

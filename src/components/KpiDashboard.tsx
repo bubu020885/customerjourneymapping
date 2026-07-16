@@ -1,8 +1,7 @@
 import { Trophy, AlertTriangle, ThumbsUp, Zap } from 'lucide-react'
 import type { KpiData, Phase, ProjectSettings } from '../types'
-import { FOOTER_H } from '../layoutConstants'
 
-function GesGauge({ value, project }: { value: number; project: ProjectSettings }) {
+function ScoreGauge({ value, project }: { value: number; project: ProjectSettings }) {
   const pct = Math.max(0, Math.min(10, value)) / 10
   const r = 34
   const c = 2 * Math.PI * r
@@ -88,8 +87,9 @@ function ListCard({
 
 export function KpiDashboard({ kpi, phases, project }: { kpi: KpiData; phases: Phase[]; project: ProjectSettings }) {
   if (!project.showKpi && !project.showSummary) return null
+  const avgScore = phases.length ? phases.reduce((sum, p) => sum + p.score, 0) / phases.length : 0
   return (
-    <div className="flex shrink-0 border-t-2" style={{ height: FOOTER_H, borderColor: project.colors.primary }}>
+    <div className="flex shrink-0 border-t-2" style={{ height: project.kpiHeight, borderColor: project.colors.primary }}>
       {project.showSummary && (
         <div
           className="flex flex-col justify-center gap-1.5 px-4 shrink-0"
@@ -109,11 +109,11 @@ export function KpiDashboard({ kpi, phases, project }: { kpi: KpiData; phases: P
         <>
           <div className="flex flex-col items-center justify-center gap-1 px-4 shrink-0 border-l" style={{ borderColor: '#e5e7eb', width: 150 }}>
             <div className="uppercase font-bold text-center" style={{ fontSize: project.fontSize * 0.6, color: '#6b7280' }}>
-              Guest Effort Score
+              Erlebnis-Score
             </div>
-            <GesGauge value={kpi.guestEffortScore} project={project} />
+            <ScoreGauge value={avgScore} project={project} />
             <div className="text-center opacity-70" style={{ fontSize: project.fontSize * 0.48, color: '#6b7280' }}>
-              0 = gering · 10 = hoch
+              Ø aller Phasen
             </div>
           </div>
 

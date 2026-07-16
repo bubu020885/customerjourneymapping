@@ -67,6 +67,9 @@ export function GlobalSettings({
       <Field label="Zeilenhöhe (Datenzeilen)">
         <SliderInput value={project.rowHeight} onChange={(rowHeight) => onChange({ rowHeight })} min={0.6} max={1.8} step={0.05} />
       </Field>
+      <Field label="Höhe KPI-Bereich">
+        <SliderInput value={project.kpiHeight} onChange={(kpiHeight) => onChange({ kpiHeight })} min={120} max={420} step={10} suffix="px" />
+      </Field>
 
       <SectionTitle>Anzeige</SectionTitle>
       <Toggle checked={project.showKpi} onChange={(showKpi) => onChange({ showKpi })} label="KPI-Bereich anzeigen" />
@@ -86,18 +89,9 @@ export function GlobalSettings({
       </Field>
 
       <SectionTitle>KPIs</SectionTitle>
-      <Field label="Guest Effort Score (0 = sehr geringer Aufwand, 10 = sehr hoher Aufwand)">
-        <SliderInput
-          value={kpi.guestEffortScore}
-          onChange={(guestEffortScore) => onChangeKpi({ guestEffortScore })}
-          min={0}
-          max={10}
-          step={0.1}
-        />
-      </Field>
       <p className="text-[11px] text-gray-400 -mt-1">
-        Wird nicht automatisch berechnet – trage den Wert manuell ein, z. B. aus einer Gästebefragung oder deiner
-        Einschätzung des Aufwands entlang der Journey.
+        Der Erlebnis-Score wird automatisch als Durchschnitt der Erlebnis-Scores aller Phasen berechnet – kein
+        manueller Eintrag nötig.
       </p>
       <Field label="Top 5 Pain Points (eine Zeile je Eintrag)">
         <ListEditor items={kpi.topPainPoints} onChange={(topPainPoints) => onChangeKpi({ topPainPoints })} rows={5} />

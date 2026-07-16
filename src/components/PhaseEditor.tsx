@@ -1,11 +1,11 @@
 import { Plus, Trash2 } from 'lucide-react'
 import type { Phase, Emotion, ProjectSettings } from '../types'
-import { EMOTION_META, DEFAULT_BODY_TEXT_COLOR, DEFAULT_PAIN_POINT_COLOR, DEFAULT_OPPORTUNITY_COLOR, MAX_PRESENTATION_PHOTOS } from '../types'
+import { EMOTION_META, EMOTION_ORDER, DEFAULT_BODY_TEXT_COLOR, DEFAULT_PAIN_POINT_COLOR, DEFAULT_OPPORTUNITY_COLOR, MAX_PRESENTATION_PHOTOS } from '../types'
 import { Field, TextInput, ListEditor, ColorInput, SliderInput, Select, ImageUpload, PhotoGridUpload, SectionTitle } from './ui'
 
-const EMOTION_OPTIONS: { value: Emotion; label: string }[] = (
-  ['sehr positiv', 'positiv', 'neutral', 'negativ', 'kritisch'] as Emotion[]
-).map((e) => ({ value: e, label: `${EMOTION_META[e].emoji} ${EMOTION_META[e].label}` }))
+const EMOTION_OPTIONS: { value: Emotion; label: string }[] = [...EMOTION_ORDER]
+  .reverse()
+  .map((e) => ({ value: e, label: `${EMOTION_META[e].emoji} ${EMOTION_META[e].label}` }))
 
 export function PhaseEditor({
   phase,

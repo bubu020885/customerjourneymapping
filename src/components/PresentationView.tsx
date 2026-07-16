@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, X, FileText, Download } from 'lucide-react'
-import type { Phase, ProjectSettings } from '../types'
+import type { Phase, ProjectSettings, KpiData } from '../types'
 import { CANVAS_W, CANVAS_H } from '../layoutConstants'
-import { PresentationSlide } from './PresentationSlide'
+import { PresentationSlide, KpiSummarySlide } from './PresentationSlide'
 
 export function PresentationView({
   phases,
+  kpi,
   project,
   slideIndex,
   onSlideIndexChange,
@@ -14,6 +15,7 @@ export function PresentationView({
   exporting,
 }: {
   phases: Phase[]
+  kpi: KpiData
   project: ProjectSettings
   slideIndex: number
   onSlideIndexChange: (i: number) => void
@@ -24,10 +26,12 @@ export function PresentationView({
   const outerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(0.3)
 
-  const totalSlides = phases.length * 2
-  const phaseIndex = Math.floor(slideIndex / 2)
-  const part = ((slideIndex % 2) + 1) as 1 | 2
-  const phase = phases[phaseIndex]
+  const hasKpiSlide = project.showKpi || project.showSummary
+  const totalSlides = phases.length * 2 + (hasKpiSlide ? 1 : 0)
+  const isKpiSlide = hasKpiSlide && slideIndex === totalSlides - 1
+  const phaseIndex = isKpiSlide ? -1 : Math.floor(slideIndex / 2)
+  const part = isKpiSlide ? undefined : (((slideIndex % 2) + 1) as 1 | 2)
+  const phase = isKpiSlide ? undefined : phases[phaseIndex]
 
   useEffect(() => {
     const el = outerRef.current
@@ -51,7 +55,7 @@ export function PresentationView({
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [slideIndex, totalSlides, onSlideIndexChange, onExit])
 
-  if (!phase) return null
+  if (!isKpiSlide && !phase) return null
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-gray-900">
@@ -66,8 +70,8 @@ export function PresentationView({
         >
           <ChevronLeft size={16} />
         </button>
-        <span className="text-sm tabular-nums w-40 text-center text-white/80">
-          Phase {phaseIndex + 1} / {phases.length} · Folie {part}/2
+        <span className="text-sm tabular-nums w-44 text-center text-white/80">
+          {isKpiSlide ? 'Zusammenfassung' : `Phase ${phaseIndex + 1} / ${phases.length} · Folie ${part}/2`}
         </span>
         <button
           onClick={() => onSlideIndexChange(Math.min(totalSlides - 1, slideIndex + 1))}
@@ -108,7 +112,19 @@ export function PresentationView({
       <div ref={outerRef} className="relative flex flex-1 min-h-0 items-center justify-center overflow-hidden">
         <div style={{ width: CANVAS_W * scale, height: CANVAS_H * scale }}>
           <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', boxShadow: '0 10px 40px rgba(0,0,0,0.4)' }}>
-            <PresentationSlide phase={phase} project={project} part={part} phaseIndex={phaseIndex} phaseCount={phases.length} />
+            {isKpiSlide ? (
+              <KpiSummarySlide phases={phases} kpi={kpi} project={project} totalSlides={totalSlides} slideNumber={slideIndex} />
+            ) : (
+              <PresentationSlide
+                phase={phase!}
+                project={project}
+                part={part!}
+                phaseIndex={phaseIndex}
+                phaseCount={phases.length}
+                totalSlides={totalSlides}
+                slideNumber={slideIndex}
+              />
+            )}
           </div>
         </div>
 

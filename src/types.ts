@@ -1,14 +1,38 @@
-export type Emotion = 'sehr positiv' | 'positiv' | 'neutral' | 'negativ' | 'kritisch'
+export type Emotion =
+  | 'verzaubert'
+  | 'sehr positiv'
+  | 'positiv'
+  | 'überrascht'
+  | 'neutral'
+  | 'verwirrt'
+  | 'negativ'
+  | 'verärgert'
+  | 'kritisch'
 
 export const EMOTION_META: Record<Emotion, { emoji: string; color: string; label: string }> = {
+  verzaubert: { emoji: '🤩', color: '#0d9488', label: 'Verzaubert' },
   'sehr positiv': { emoji: '😄', color: '#1f9d55', label: 'Sehr positiv' },
   positiv: { emoji: '🙂', color: '#4caf50', label: 'Positiv' },
+  überrascht: { emoji: '😮', color: '#a3c925', label: 'Überrascht' },
   neutral: { emoji: '😐', color: '#f2b705', label: 'Neutral' },
+  verwirrt: { emoji: '😕', color: '#f0951a', label: 'Verwirrt' },
   negativ: { emoji: '☹️', color: '#f2761f', label: 'Negativ' },
+  verärgert: { emoji: '😠', color: '#e2531f', label: 'Verärgert' },
   kritisch: { emoji: '😡', color: '#d92b2b', label: 'Kritisch' },
 }
 
-export const EMOTION_ORDER: Emotion[] = ['kritisch', 'negativ', 'neutral', 'positiv', 'sehr positiv']
+/** Worst to best, used for consistent ordering (dropdown, any future scales). */
+export const EMOTION_ORDER: Emotion[] = [
+  'kritisch',
+  'verärgert',
+  'negativ',
+  'verwirrt',
+  'neutral',
+  'überrascht',
+  'positiv',
+  'sehr positiv',
+  'verzaubert',
+]
 
 export interface Phase {
   id: string
@@ -70,12 +94,15 @@ export interface ProjectSettings {
   showKpi: boolean
   showSummary: boolean
   showPhaseImages: boolean
+  /** Height in px of the bottom KPI/summary band on the canvas. */
+  kpiHeight: number
 }
+
+export const DEFAULT_KPI_HEIGHT = 260
 
 export interface KpiData {
   insightTitle: string
   insightText: string
-  guestEffortScore: number
   topPainPoints: string[]
   topStrengths: string[]
   topLevers: string[]

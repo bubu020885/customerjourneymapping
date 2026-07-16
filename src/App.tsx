@@ -7,7 +7,7 @@ import { GlobalSettings } from './components/GlobalSettings'
 import { Toolbar } from './components/Toolbar'
 import { ExportResultModal } from './components/ExportResultModal'
 import { PresentationView } from './components/PresentationView'
-import { PresentationSlide } from './components/PresentationSlide'
+import { PresentationSlide, KpiSummarySlide } from './components/PresentationSlide'
 import { generateExport, generatePresentationExport, tryAutoDownload, type ExportFormat, type ExportResult } from './utils/export'
 import { generateJsonExport, importJson } from './utils/jsonIO'
 
@@ -41,6 +41,8 @@ function App() {
   const presentationExportRefs = useRef<(HTMLDivElement | null)[]>([])
 
   const selectedPhase = phases.find((p) => p.id === selectedPhaseId) ?? null
+  const presentationHasKpiSlide = project.showKpi || project.showSummary
+  const presentationTotalSlides = phases.length * 2 + (presentationHasKpiSlide ? 1 : 0)
 
   async function handleExport(format: ExportFormat, highRes: boolean) {
     if (!exportRef.current) return
@@ -198,14 +200,29 @@ function App() {
               part={part}
               phaseIndex={i}
               phaseCount={phases.length}
+              totalSlides={presentationTotalSlides}
+              slideNumber={i * 2 + (part - 1)}
             />
           )),
+        )}
+        {presentationHasKpiSlide && (
+          <KpiSummarySlide
+            ref={(el) => {
+              presentationExportRefs.current[phases.length * 2] = el
+            }}
+            phases={phases}
+            kpi={kpi}
+            project={project}
+            totalSlides={presentationTotalSlides}
+            slideNumber={phases.length * 2}
+          />
         )}
       </div>
 
       {presentationMode && (
         <PresentationView
           phases={phases}
+          kpi={kpi}
           project={project}
           slideIndex={presentationSlideIndex}
           onSlideIndexChange={setPresentationSlideIndex}

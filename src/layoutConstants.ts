@@ -4,7 +4,6 @@ export const CANVAS_W = 1920
 export const CANVAS_H = 1080
 export const LABEL_COL_W = 210
 export const HEADER_H = 108
-export const FOOTER_H = 260
 
 export const PHASE_HEADER_WEIGHT_WITH_IMAGE = 1.7
 export const PHASE_HEADER_WEIGHT_NO_IMAGE = 0.85
@@ -12,7 +11,7 @@ export const PHASE_HEADER_WEIGHT_NO_IMAGE = 0.85
 export const DATA_ROWS = [
   { key: 'goals', label: 'Ziele & Bedürfnisse', weight: 1 },
   { key: 'touchpoints', label: 'Touchpoints', weight: 1 },
-  { key: 'emotion', label: 'Emotionen', weight: 1.05 },
+  { key: 'emotion', label: 'Emotionen', weight: 0.9 },
   { key: 'score', label: 'Erlebnis (Score)', weight: 0.8 },
   { key: 'painPoints', label: 'Pain Points', weight: 1.3 },
   { key: 'opportunities', label: 'Opportunities', weight: 1.3 },
@@ -29,7 +28,7 @@ export interface RowBand {
 }
 
 export function computeRowBands(project: ProjectSettings): { header: number; footer: number; rowsAreaTop: number; rowsAreaHeight: number; phaseHeaderBand: RowBand; dataBands: RowBand[] } {
-  const footer = project.showKpi || project.showSummary ? FOOTER_H : 0
+  const footer = project.showKpi || project.showSummary ? project.kpiHeight : 0
   const rowsAreaTop = HEADER_H
   const rowsAreaHeight = CANVAS_H - HEADER_H - footer
 
