@@ -130,6 +130,7 @@ export function PhaseColumn({
           <button
             {...attributes}
             {...listeners}
+            data-pan-ignore
             onClick={(e) => e.stopPropagation()}
             className="absolute z-30 left-1 flex items-center justify-center rounded opacity-0 group-hover:opacity-80 hover:!opacity-100 text-white bg-black/25 cursor-grab active:cursor-grabbing"
             style={{ top: bands.phaseHeaderBand.top + 2, width: 20, height: 20 }}
@@ -138,6 +139,7 @@ export function PhaseColumn({
             <GripVertical size={13} />
           </button>
           <button
+            data-pan-ignore
             onClick={(e) => {
               e.stopPropagation()
               onDelete()

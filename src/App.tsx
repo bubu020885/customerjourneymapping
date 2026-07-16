@@ -24,6 +24,7 @@ function App() {
     updatePhase,
     reorderPhases,
     updateProject,
+    updateKpi,
     loadData,
   } = useJourneyStore()
 
@@ -126,7 +127,7 @@ function App() {
                 onInsertAfter={() => selectedPhase && insertPhaseAfter(selectedPhase.id)}
               />
             ) : (
-              <GlobalSettings project={project} onChange={updateProject} />
+              <GlobalSettings project={project} kpi={kpi} onChange={updateProject} onChangeKpi={updateKpi} />
             )}
           </div>
         </div>

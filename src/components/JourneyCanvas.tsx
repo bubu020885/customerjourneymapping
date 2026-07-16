@@ -4,7 +4,6 @@ import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortabl
 import type { Phase, ProjectSettings, KpiData } from '../types'
 import { CANVAS_W, CANVAS_H } from '../layoutConstants'
 import { CanvasHeader } from './CanvasHeader'
-import { Legend } from './Legend'
 import { RowLabelsColumn } from './RowLabelsColumn'
 import { PhaseColumn } from './PhaseColumn'
 import { EmotionCurve } from './EmotionCurve'
@@ -48,7 +47,6 @@ export const JourneyCanvas = forwardRef<HTMLDivElement, Props>(function JourneyC
       }}
     >
       <CanvasHeader project={project} />
-      {project.showLegend && <Legend project={project} />}
 
       <div className="relative flex flex-1 min-h-0">
         <RowLabelsColumn project={project} />

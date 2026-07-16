@@ -1,7 +1,17 @@
-import type { ProjectSettings } from '../types'
-import { Field, TextInput, TextArea, ColorInput, SliderInput, ImageUpload, Toggle, SectionTitle } from './ui'
+import type { ProjectSettings, KpiData } from '../types'
+import { Field, TextInput, TextArea, ListEditor, ColorInput, SliderInput, ImageUpload, Toggle, SectionTitle } from './ui'
 
-export function GlobalSettings({ project, onChange }: { project: ProjectSettings; onChange: (patch: Partial<ProjectSettings>) => void }) {
+export function GlobalSettings({
+  project,
+  kpi,
+  onChange,
+  onChangeKpi,
+}: {
+  project: ProjectSettings
+  kpi: KpiData
+  onChange: (patch: Partial<ProjectSettings>) => void
+  onChangeKpi: (patch: Partial<KpiData>) => void
+}) {
   return (
     <div className="flex flex-col gap-3 p-4 overflow-y-auto h-full">
       <SectionTitle>Report</SectionTitle>
@@ -59,7 +69,6 @@ export function GlobalSettings({ project, onChange }: { project: ProjectSettings
       </Field>
 
       <SectionTitle>Anzeige</SectionTitle>
-      <Toggle checked={project.showLegend} onChange={(showLegend) => onChange({ showLegend })} label="Legende anzeigen" />
       <Toggle checked={project.showKpi} onChange={(showKpi) => onChange({ showKpi })} label="KPI-Bereich anzeigen" />
       <Toggle checked={project.showSummary} onChange={(showSummary) => onChange({ showSummary })} label="Bottom Summary anzeigen" />
       <Toggle
@@ -67,6 +76,38 @@ export function GlobalSettings({ project, onChange }: { project: ProjectSettings
         onChange={(showPhaseImages) => onChange({ showPhaseImages })}
         label="Bilder pro Phase anzeigen"
       />
+
+      <SectionTitle>Overall Journey Insight</SectionTitle>
+      <Field label="Titel">
+        <TextInput value={kpi.insightTitle} onChange={(insightTitle) => onChangeKpi({ insightTitle })} />
+      </Field>
+      <Field label="Text">
+        <TextArea value={kpi.insightText} onChange={(insightText) => onChangeKpi({ insightText })} rows={4} />
+      </Field>
+
+      <SectionTitle>KPIs</SectionTitle>
+      <Field label="Guest Effort Score (0 = sehr geringer Aufwand, 10 = sehr hoher Aufwand)">
+        <SliderInput
+          value={kpi.guestEffortScore}
+          onChange={(guestEffortScore) => onChangeKpi({ guestEffortScore })}
+          min={0}
+          max={10}
+          step={0.1}
+        />
+      </Field>
+      <p className="text-[11px] text-gray-400 -mt-1">
+        Wird nicht automatisch berechnet – trage den Wert manuell ein, z. B. aus einer Gästebefragung oder deiner
+        Einschätzung des Aufwands entlang der Journey.
+      </p>
+      <Field label="Top 5 Pain Points (eine Zeile je Eintrag)">
+        <ListEditor items={kpi.topPainPoints} onChange={(topPainPoints) => onChangeKpi({ topPainPoints })} rows={5} />
+      </Field>
+      <Field label="Top Stärken">
+        <ListEditor items={kpi.topStrengths} onChange={(topStrengths) => onChangeKpi({ topStrengths })} rows={4} />
+      </Field>
+      <Field label="Größte Hebel">
+        <ListEditor items={kpi.topLevers} onChange={(topLevers) => onChangeKpi({ topLevers })} rows={5} />
+      </Field>
     </div>
   )
 }

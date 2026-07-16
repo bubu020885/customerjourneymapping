@@ -4,7 +4,6 @@ export const CANVAS_W = 1920
 export const CANVAS_H = 1080
 export const LABEL_COL_W = 210
 export const HEADER_H = 108
-export const LEGEND_H = 34
 export const FOOTER_H = 260
 
 export const PHASE_HEADER_WEIGHT_WITH_IMAGE = 1.7
@@ -29,11 +28,10 @@ export interface RowBand {
   height: number
 }
 
-export function computeRowBands(project: ProjectSettings): { header: number; legend: number; footer: number; rowsAreaTop: number; rowsAreaHeight: number; phaseHeaderBand: RowBand; dataBands: RowBand[] } {
-  const legend = project.showLegend ? LEGEND_H : 0
+export function computeRowBands(project: ProjectSettings): { header: number; footer: number; rowsAreaTop: number; rowsAreaHeight: number; phaseHeaderBand: RowBand; dataBands: RowBand[] } {
   const footer = project.showKpi || project.showSummary ? FOOTER_H : 0
-  const rowsAreaTop = HEADER_H + legend
-  const rowsAreaHeight = CANVAS_H - HEADER_H - legend - footer
+  const rowsAreaTop = HEADER_H
+  const rowsAreaHeight = CANVAS_H - HEADER_H - footer
 
   const rowMult = project.rowHeight || 1
   const phaseHeaderWeight = project.showPhaseImages !== false ? PHASE_HEADER_WEIGHT_WITH_IMAGE : PHASE_HEADER_WEIGHT_NO_IMAGE
@@ -51,7 +49,7 @@ export function computeRowBands(project: ProjectSettings): { header: number; leg
     return band
   })
 
-  return { header: HEADER_H, legend, footer, rowsAreaTop, rowsAreaHeight, phaseHeaderBand, dataBands }
+  return { header: HEADER_H, footer, rowsAreaTop, rowsAreaHeight, phaseHeaderBand, dataBands }
 }
 
 export function getPhaseCenterX(columnGap: number, phaseCount: number, index: number): number {

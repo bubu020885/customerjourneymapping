@@ -18,7 +18,6 @@ export const emptyProject: JourneyMapData = {
     cardRadius: 12,
     columnGap: 10,
     rowHeight: 1,
-    showLegend: true,
     showKpi: true,
     showSummary: true,
     showPhaseImages: true,

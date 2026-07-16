@@ -112,6 +112,9 @@ export function KpiDashboard({ kpi, phases, project }: { kpi: KpiData; phases: P
               Guest Effort Score
             </div>
             <GesGauge value={kpi.guestEffortScore} project={project} />
+            <div className="text-center opacity-70" style={{ fontSize: project.fontSize * 0.48, color: '#6b7280' }}>
+              0 = gering · 10 = hoch
+            </div>
           </div>
 
           <div className="flex flex-col items-center justify-center gap-1 px-4 shrink-0 border-l" style={{ borderColor: '#e5e7eb', width: 210 }}>

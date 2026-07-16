@@ -63,7 +63,6 @@ export interface ProjectSettings {
   cardRadius: number
   columnGap: number
   rowHeight: number
-  showLegend: boolean
   showKpi: boolean
   showSummary: boolean
   showPhaseImages: boolean
