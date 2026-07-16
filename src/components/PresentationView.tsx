@@ -7,23 +7,27 @@ import { PresentationSlide } from './PresentationSlide'
 export function PresentationView({
   phases,
   project,
-  index,
-  onIndexChange,
+  slideIndex,
+  onSlideIndexChange,
   onExit,
   onExportPdf,
   exporting,
 }: {
   phases: Phase[]
   project: ProjectSettings
-  index: number
-  onIndexChange: (i: number) => void
+  slideIndex: number
+  onSlideIndexChange: (i: number) => void
   onExit: () => void
   onExportPdf: () => void
   exporting: boolean
 }) {
   const outerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(0.3)
-  const phase = phases[index]
+
+  const totalSlides = phases.length * 2
+  const phaseIndex = Math.floor(slideIndex / 2)
+  const part = ((slideIndex % 2) + 1) as 1 | 2
+  const phase = phases[phaseIndex]
 
   useEffect(() => {
     const el = outerRef.current
@@ -39,13 +43,13 @@ export function PresentationView({
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'ArrowRight') onIndexChange(Math.min(phases.length - 1, index + 1))
-      else if (e.key === 'ArrowLeft') onIndexChange(Math.max(0, index - 1))
+      if (e.key === 'ArrowRight') onSlideIndexChange(Math.min(totalSlides - 1, slideIndex + 1))
+      else if (e.key === 'ArrowLeft') onSlideIndexChange(Math.max(0, slideIndex - 1))
       else if (e.key === 'Escape') onExit()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [index, phases.length, onIndexChange, onExit])
+  }, [slideIndex, totalSlides, onSlideIndexChange, onExit])
 
   if (!phase) return null
 
@@ -55,21 +59,21 @@ export function PresentationView({
         <span className="font-bold mr-2">Präsentationsmodus</span>
 
         <button
-          onClick={() => onIndexChange(Math.max(0, index - 1))}
-          disabled={index === 0}
+          onClick={() => onSlideIndexChange(Math.max(0, slideIndex - 1))}
+          disabled={slideIndex === 0}
           className="flex items-center gap-1 rounded-md border border-white/20 px-2.5 py-1.5 text-sm hover:bg-white/10 disabled:opacity-30"
-          title="Vorherige Phase"
+          title="Vorherige Folie"
         >
           <ChevronLeft size={16} />
         </button>
-        <span className="text-sm tabular-nums w-24 text-center text-white/80">
-          Phase {index + 1} / {phases.length}
+        <span className="text-sm tabular-nums w-40 text-center text-white/80">
+          Phase {phaseIndex + 1} / {phases.length} · Folie {part}/2
         </span>
         <button
-          onClick={() => onIndexChange(Math.min(phases.length - 1, index + 1))}
-          disabled={index === phases.length - 1}
+          onClick={() => onSlideIndexChange(Math.min(totalSlides - 1, slideIndex + 1))}
+          disabled={slideIndex === totalSlides - 1}
           className="flex items-center gap-1 rounded-md border border-white/20 px-2.5 py-1.5 text-sm hover:bg-white/10 disabled:opacity-30"
-          title="Nächste Phase"
+          title="Nächste Folie"
         >
           <ChevronRight size={16} />
         </button>
@@ -104,24 +108,24 @@ export function PresentationView({
       <div ref={outerRef} className="relative flex flex-1 min-h-0 items-center justify-center overflow-hidden">
         <div style={{ width: CANVAS_W * scale, height: CANVAS_H * scale }}>
           <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', boxShadow: '0 10px 40px rgba(0,0,0,0.4)' }}>
-            <PresentationSlide phase={phase} project={project} index={index} total={phases.length} />
+            <PresentationSlide phase={phase} project={project} part={part} phaseIndex={phaseIndex} phaseCount={phases.length} />
           </div>
         </div>
 
-        {index > 0 && (
+        {slideIndex > 0 && (
           <button
-            onClick={() => onIndexChange(index - 1)}
+            onClick={() => onSlideIndexChange(slideIndex - 1)}
             className="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-            title="Vorherige Phase"
+            title="Vorherige Folie"
           >
             <ChevronLeft size={22} />
           </button>
         )}
-        {index < phases.length - 1 && (
+        {slideIndex < totalSlides - 1 && (
           <button
-            onClick={() => onIndexChange(index + 1)}
+            onClick={() => onSlideIndexChange(slideIndex + 1)}
             className="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-            title="Nächste Phase"
+            title="Nächste Folie"
           >
             <ChevronRight size={22} />
           </button>

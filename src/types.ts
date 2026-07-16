@@ -39,7 +39,7 @@ export interface Phase {
   photos?: string[]
 }
 
-export const MAX_PRESENTATION_PHOTOS = 3
+export const MAX_PRESENTATION_PHOTOS = 4
 
 export const DEFAULT_BODY_TEXT_COLOR = '#1f2937'
 export const DEFAULT_PAIN_POINT_COLOR = '#c0272d'

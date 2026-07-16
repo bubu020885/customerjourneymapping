@@ -36,7 +36,7 @@ function App() {
   const exportRef = useRef<HTMLDivElement>(null)
 
   const [presentationMode, setPresentationMode] = useState(false)
-  const [presentationIndex, setPresentationIndex] = useState(0)
+  const [presentationSlideIndex, setPresentationSlideIndex] = useState(0)
   const [presentationExporting, setPresentationExporting] = useState(false)
   const presentationExportRefs = useRef<(HTMLDivElement | null)[]>([])
 
@@ -83,7 +83,7 @@ function App() {
   }
 
   function startPresentation() {
-    setPresentationIndex(0)
+    setPresentationSlideIndex(0)
     setPresentationMode(true)
   }
 
@@ -186,26 +186,29 @@ function App() {
           multi-page PDF export. Kept in normal document flow for the same reason as the
           main export container above (see comment there). */}
       <div style={{ position: 'absolute', top: 0, left: 0, width: 1, height: 1, overflow: 'hidden', pointerEvents: 'none' }} aria-hidden>
-        {phases.map((phase, i) => (
-          <PresentationSlide
-            key={phase.id}
-            ref={(el) => {
-              presentationExportRefs.current[i] = el
-            }}
-            phase={phase}
-            project={project}
-            index={i}
-            total={phases.length}
-          />
-        ))}
+        {phases.map((phase, i) =>
+          ([1, 2] as const).map((part) => (
+            <PresentationSlide
+              key={`${phase.id}-${part}`}
+              ref={(el) => {
+                presentationExportRefs.current[i * 2 + (part - 1)] = el
+              }}
+              phase={phase}
+              project={project}
+              part={part}
+              phaseIndex={i}
+              phaseCount={phases.length}
+            />
+          )),
+        )}
       </div>
 
       {presentationMode && (
         <PresentationView
           phases={phases}
           project={project}
-          index={presentationIndex}
-          onIndexChange={setPresentationIndex}
+          slideIndex={presentationSlideIndex}
+          onSlideIndexChange={setPresentationSlideIndex}
           onExit={() => setPresentationMode(false)}
           onExportPdf={handleExportPresentation}
           exporting={presentationExporting}

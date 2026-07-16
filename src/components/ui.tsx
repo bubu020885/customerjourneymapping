@@ -213,7 +213,7 @@ export function PhotoGridUpload({
   const slots = Array.from({ length: max }, (_, i) => photos[i] ?? '')
 
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(max, 4)}, 1fr)` }}>
       {slots.map((value, i) => (
         <div key={i} className="aspect-square">
           {value ? (
