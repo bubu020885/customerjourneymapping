@@ -46,6 +46,7 @@ function createBlankPhase(colorSeed: number): Phase {
     painPoints: [],
     opportunities: [],
     recommendations: [],
+    photos: [],
   }
 }
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Plus, Download, FileJson, Upload, FileImage, FileText } from 'lucide-react'
+import { Plus, Download, FileJson, Upload, FileImage, FileText, Presentation } from 'lucide-react'
 import type { ExportFormat } from '../utils/export'
 
 export function Toolbar({
@@ -7,12 +7,14 @@ export function Toolbar({
   onExport,
   onExportJson,
   onImportJson,
+  onStartPresentation,
   exporting,
 }: {
   onAddPhase: () => void
   onExport: (format: ExportFormat, highRes: boolean) => void
   onExportJson: () => void
   onImportJson: (file: File) => void
+  onStartPresentation: () => void
   exporting: boolean
 }) {
   const [highRes, setHighRes] = useState(false)
@@ -83,6 +85,15 @@ export function Toolbar({
           e.target.value = ''
         }}
       />
+
+      <div className="h-6 w-px bg-gray-200 mx-1" />
+
+      <button
+        onClick={onStartPresentation}
+        className="flex items-center gap-1 rounded-md border border-amber-300 bg-amber-50 text-amber-700 px-3 py-1.5 text-sm font-medium hover:bg-amber-100"
+      >
+        <Presentation size={16} /> Präsentation starten
+      </button>
 
       <div className="flex-1" />
 

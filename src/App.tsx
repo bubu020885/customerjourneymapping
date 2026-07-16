@@ -6,7 +6,9 @@ import { PhaseEditor } from './components/PhaseEditor'
 import { GlobalSettings } from './components/GlobalSettings'
 import { Toolbar } from './components/Toolbar'
 import { ExportResultModal } from './components/ExportResultModal'
-import { generateExport, tryAutoDownload, type ExportFormat, type ExportResult } from './utils/export'
+import { PresentationView } from './components/PresentationView'
+import { PresentationSlide } from './components/PresentationSlide'
+import { generateExport, generatePresentationExport, tryAutoDownload, type ExportFormat, type ExportResult } from './utils/export'
 import { generateJsonExport, importJson } from './utils/jsonIO'
 
 type Tab = 'phase' | 'global'
@@ -32,6 +34,11 @@ function App() {
   const [exporting, setExporting] = useState(false)
   const [exportResult, setExportResult] = useState<ExportResult | null>(null)
   const exportRef = useRef<HTMLDivElement>(null)
+
+  const [presentationMode, setPresentationMode] = useState(false)
+  const [presentationIndex, setPresentationIndex] = useState(0)
+  const [presentationExporting, setPresentationExporting] = useState(false)
+  const presentationExportRefs = useRef<(HTMLDivElement | null)[]>([])
 
   const selectedPhase = phases.find((p) => p.id === selectedPhaseId) ?? null
 
@@ -75,6 +82,26 @@ function App() {
     setTab('phase')
   }
 
+  function startPresentation() {
+    setPresentationIndex(0)
+    setPresentationMode(true)
+  }
+
+  async function handleExportPresentation() {
+    const nodes = presentationExportRefs.current.filter((n): n is HTMLDivElement => n !== null)
+    setPresentationExporting(true)
+    try {
+      const result = await generatePresentationExport(nodes, project.title)
+      tryAutoDownload(result)
+      setExportResult(result)
+    } catch (err) {
+      console.error(err)
+      alert('Export fehlgeschlagen: ' + (err as Error).message)
+    } finally {
+      setPresentationExporting(false)
+    }
+  }
+
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-50">
       <Toolbar
@@ -82,6 +109,7 @@ function App() {
         onExport={handleExport}
         onExportJson={handleExportJson}
         onImportJson={handleImportJson}
+        onStartPresentation={startPresentation}
         exporting={exporting}
       />
 
@@ -153,6 +181,36 @@ function App() {
           onReorder={() => {}}
         />
       </div>
+
+      {/* Hidden full-resolution copies of every presentation slide, used purely for the
+          multi-page PDF export. Kept in normal document flow for the same reason as the
+          main export container above (see comment there). */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: 1, height: 1, overflow: 'hidden', pointerEvents: 'none' }} aria-hidden>
+        {phases.map((phase, i) => (
+          <PresentationSlide
+            key={phase.id}
+            ref={(el) => {
+              presentationExportRefs.current[i] = el
+            }}
+            phase={phase}
+            project={project}
+            index={i}
+            total={phases.length}
+          />
+        ))}
+      </div>
+
+      {presentationMode && (
+        <PresentationView
+          phases={phases}
+          project={project}
+          index={presentationIndex}
+          onIndexChange={setPresentationIndex}
+          onExit={() => setPresentationMode(false)}
+          onExportPdf={handleExportPresentation}
+          exporting={presentationExporting}
+        />
+      )}
 
       {exportResult && <ExportResultModal result={exportResult} onClose={closeExportResult} />}
     </div>

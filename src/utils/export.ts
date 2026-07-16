@@ -69,6 +69,30 @@ export async function generateExport(node: HTMLElement, format: ExportFormat, hi
   return { blob, url: URL.createObjectURL(blob), filename: `${baseFilename}.pdf`, mimeType: 'application/pdf' }
 }
 
+/**
+ * Renders one node per presentation slide and combines them into a single multi-page PDF
+ * (one page per phase), following the same landscape/16:9 page geometry as the main export.
+ */
+export async function generatePresentationExport(nodes: HTMLElement[], baseName: string): Promise<ExportResult> {
+  if (nodes.length === 0) {
+    throw new Error('Keine Phasen zum Exportieren vorhanden.')
+  }
+  const baseFilename = slugify(baseName)
+  const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [CANVAS_W, CANVAS_H] })
+
+  for (let i = 0; i < nodes.length; i++) {
+    const canvas = await toCanvas(nodes[i], { pixelRatio: 1, backgroundColor: '#ffffff', width: CANVAS_W, height: CANVAS_H, cacheBust: true })
+    if (canvas.width === 0 || canvas.height === 0) {
+      throw new Error('Die gerenderte Grafik ist leer. Bitte versuche es erneut.')
+    }
+    if (i > 0) pdf.addPage([CANVAS_W, CANVAS_H], 'landscape')
+    pdf.addImage(canvas, 'PNG', 0, 0, CANVAS_W, CANVAS_H)
+  }
+
+  const blob: Blob = pdf.output('blob')
+  return { blob, url: URL.createObjectURL(blob), filename: `${baseFilename}-praesentation.pdf`, mimeType: 'application/pdf' }
+}
+
 /** Best-effort automatic download. May silently no-op in sandboxed iframes — not the only path offered to the user. */
 export function tryAutoDownload(result: ExportResult) {
   try {

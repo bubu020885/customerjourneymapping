@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from 'lucide-react'
 import type { Phase, Emotion, ProjectSettings } from '../types'
 import { EMOTION_META, DEFAULT_BODY_TEXT_COLOR, DEFAULT_PAIN_POINT_COLOR, DEFAULT_OPPORTUNITY_COLOR } from '../types'
-import { Field, TextInput, ListEditor, ColorInput, SliderInput, Select, ImageUpload, SectionTitle } from './ui'
+import { Field, TextInput, ListEditor, ColorInput, SliderInput, Select, ImageUpload, PhotoGridUpload, SectionTitle } from './ui'
 
 const EMOTION_OPTIONS: { value: Emotion; label: string }[] = (
   ['sehr positiv', 'positiv', 'neutral', 'negativ', 'kritisch'] as Emotion[]
@@ -73,6 +73,14 @@ export function PhaseEditor({
           Bilder sind global deaktiviert. Aktiviere sie unter „Globale Einstellungen" → „Anzeige", um ein Einstiegsbild zu hinterlegen.
         </p>
       )}
+
+      <SectionTitle>Präsentationsmodus</SectionTitle>
+      <Field label="Präsentationsfotos (bis zu 3)">
+        <PhotoGridUpload photos={phase.photos ?? []} onChange={(photos) => onChange({ photos })} />
+      </Field>
+      <p className="text-[11px] text-gray-400 -mt-2">
+        Diese Fotos werden nur im Präsentationsmodus angezeigt – ideal für Eindrücke, die dem Kunden direkt gezeigt werden sollen.
+      </p>
 
       <SectionTitle>Kartenfarben</SectionTitle>
       <Field label="Hintergrund">

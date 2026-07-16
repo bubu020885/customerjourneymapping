@@ -35,7 +35,11 @@ export interface Phase {
   opportunityColor?: string
   /** Text color for recommendation entries. Falls back to the project secondary color if unset. */
   recommendationColor?: string
+  /** Up to 3 photos shown for this phase in the Präsentationsmodus (separate from the header image). */
+  photos?: string[]
 }
+
+export const MAX_PRESENTATION_PHOTOS = 3
 
 export const DEFAULT_BODY_TEXT_COLOR = '#1f2937'
 export const DEFAULT_PAIN_POINT_COLOR = '#c0272d'

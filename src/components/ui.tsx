@@ -171,6 +171,84 @@ export function ImageUpload({ value, onChange, label = 'Bild hochladen oder hier
   )
 }
 
+export function PhotoGridUpload({
+  photos,
+  onChange,
+  max = 3,
+}: {
+  photos: string[]
+  onChange: (photos: string[]) => void
+  max?: number
+}) {
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
+
+  function readFile(file: File, slot: number) {
+    if (!file.type.startsWith('image/')) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const next = [...photos]
+      next[slot] = String(reader.result)
+      onChange(next.filter(Boolean))
+    }
+    reader.readAsDataURL(file)
+  }
+
+  function handleFile(e: ChangeEvent<HTMLInputElement>, slot: number) {
+    const file = e.target.files?.[0]
+    if (file) readFile(file, slot)
+    e.target.value = ''
+  }
+
+  function handleDrop(e: DragEvent<HTMLLabelElement>, slot: number) {
+    e.preventDefault()
+    setDragIndex(null)
+    const file = e.dataTransfer.files?.[0]
+    if (file) readFile(file, slot)
+  }
+
+  function removeAt(slot: number) {
+    onChange(photos.filter((_, i) => i !== slot))
+  }
+
+  const slots = Array.from({ length: max }, (_, i) => photos[i] ?? '')
+
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {slots.map((value, i) => (
+        <div key={i} className="aspect-square">
+          {value ? (
+            <div className="relative h-full w-full group">
+              <img src={value} alt="" className="h-full w-full rounded-md object-cover border border-gray-200" />
+              <button
+                onClick={() => removeAt(i)}
+                className="absolute top-1 right-1 rounded-full bg-black/60 text-white p-0.5 opacity-0 group-hover:opacity-100"
+                title="Foto entfernen"
+              >
+                <span className="block px-1 text-xs leading-4">✕</span>
+              </button>
+            </div>
+          ) : (
+            <label
+              onDragOver={(e) => {
+                e.preventDefault()
+                setDragIndex(i)
+              }}
+              onDragLeave={() => setDragIndex(null)}
+              onDrop={(e) => handleDrop(e, i)}
+              className={`flex h-full w-full cursor-pointer items-center justify-center rounded-md border border-dashed text-center text-[10px] transition-colors ${
+                dragIndex === i ? 'border-amber-400 bg-amber-50 text-amber-700' : 'border-gray-300 text-gray-400 hover:bg-gray-50'
+              }`}
+            >
+              {dragIndex === i ? 'Loslassen' : 'Foto hinzufügen'}
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e, i)} />
+            </label>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
   return (
     <label className="flex items-center justify-between gap-2 text-sm text-gray-700 cursor-pointer">
