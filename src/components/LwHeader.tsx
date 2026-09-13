@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const LW_URL = 'https://leisureworkspace.com'
 
-function LwLogoIcon({ size = 34 }: { size?: number }) {
+export function LwLogoIcon({ size = 34 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="34" height="34" rx="8" fill="#1A7272" />

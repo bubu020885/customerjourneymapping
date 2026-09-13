@@ -6,6 +6,7 @@ import { PhaseEditor } from './components/PhaseEditor'
 import { GlobalSettings } from './components/GlobalSettings'
 import { Toolbar } from './components/Toolbar'
 import { LwHeader } from './components/LwHeader'
+import { MobileBlockOverlay } from './components/MobileBlockOverlay'
 import { ExportResultModal } from './components/ExportResultModal'
 import { PresentationView } from './components/PresentationView'
 import { PresentationSlide, KpiSummarySlide } from './components/PresentationSlide'
@@ -107,6 +108,7 @@ function App() {
 
   return (
     <div className="h-screen w-screen flex flex-col bg-[#EDEAE0]">
+      <MobileBlockOverlay />
       <LwHeader />
       <Toolbar
         onAddPhase={addPhase}
