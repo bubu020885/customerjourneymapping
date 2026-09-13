@@ -5,6 +5,7 @@ import { ScaledStage } from './components/ScaledStage'
 import { PhaseEditor } from './components/PhaseEditor'
 import { GlobalSettings } from './components/GlobalSettings'
 import { Toolbar } from './components/Toolbar'
+import { LwHeader } from './components/LwHeader'
 import { ExportResultModal } from './components/ExportResultModal'
 import { PresentationView } from './components/PresentationView'
 import { PresentationSlide, KpiSummarySlide } from './components/PresentationSlide'
@@ -105,7 +106,8 @@ function App() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-50">
+    <div className="h-screen w-screen flex flex-col bg-[#EDEAE0]">
+      <LwHeader />
       <Toolbar
         onAddPhase={addPhase}
         onExport={handleExport}
@@ -131,17 +133,17 @@ function App() {
           </ScaledStage>
         </div>
 
-        <div className="w-96 shrink-0 border-l border-gray-200 bg-white flex flex-col">
-          <div className="flex border-b border-gray-200 shrink-0">
+        <div className="w-96 shrink-0 border-l border-[#D0CBC0] bg-white flex flex-col">
+          <div className="flex border-b border-[#D0CBC0] shrink-0">
             <button
               onClick={() => setTab('phase')}
-              className={`flex-1 py-2.5 text-sm font-semibold ${tab === 'phase' ? 'text-gray-900 border-b-2 border-amber-500' : 'text-gray-400'}`}
+              className={`flex-1 py-2.5 text-sm font-semibold ${tab === 'phase' ? 'text-[#132638] border-b-2 border-[#1A7272]' : 'text-gray-400'}`}
             >
               Phase bearbeiten
             </button>
             <button
               onClick={() => setTab('global')}
-              className={`flex-1 py-2.5 text-sm font-semibold ${tab === 'global' ? 'text-gray-900 border-b-2 border-amber-500' : 'text-gray-400'}`}
+              className={`flex-1 py-2.5 text-sm font-semibold ${tab === 'global' ? 'text-[#132638] border-b-2 border-[#1A7272]' : 'text-gray-400'}`}
             >
               Globale Einstellungen
             </button>
