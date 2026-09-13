@@ -14,7 +14,7 @@ on:
       remote_dir:
         description: "Target directory on the FTP server (used in deploy mode)"
         required: false
-        default: /customerjourneymapper/
+        default: /leisureworkspace.com/customerjourneymapper/
 
 jobs:
   ftp:
