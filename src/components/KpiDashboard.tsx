@@ -1,5 +1,6 @@
 import { Trophy, AlertTriangle, ThumbsUp, Zap } from 'lucide-react'
 import type { KpiData, Phase, ProjectSettings } from '../types'
+import { useLang } from '../i18n'
 
 function ScoreGauge({ value, project }: { value: number; project: ProjectSettings }) {
   const pct = Math.max(0, Math.min(10, value)) / 10
@@ -86,6 +87,7 @@ function ListCard({
 }
 
 export function KpiDashboard({ kpi, phases, project }: { kpi: KpiData; phases: Phase[]; project: ProjectSettings }) {
+  const { t } = useLang()
   if (!project.showKpi && !project.showSummary) return null
   const avgScore = phases.length ? phases.reduce((sum, p) => sum + p.score, 0) / phases.length : 0
   return (
@@ -109,38 +111,38 @@ export function KpiDashboard({ kpi, phases, project }: { kpi: KpiData; phases: P
         <>
           <div className="flex flex-col items-center justify-center gap-1 px-4 shrink-0 border-l" style={{ borderColor: '#e5e7eb', width: 150 }}>
             <div className="uppercase font-bold text-center" style={{ fontSize: project.fontSize * 0.6, color: '#6b7280' }}>
-              Erlebnis-Score
+              {t('kpi.experienceScore')}
             </div>
             <ScoreGauge value={avgScore} project={project} />
             <div className="text-center opacity-70" style={{ fontSize: project.fontSize * 0.48, color: '#6b7280' }}>
-              Ø aller Phasen
+              {t('kpi.avgAllPhases')}
             </div>
           </div>
 
           <div className="flex flex-col items-center justify-center gap-1 px-4 shrink-0 border-l" style={{ borderColor: '#e5e7eb', width: 210 }}>
             <div className="uppercase font-bold text-center" style={{ fontSize: project.fontSize * 0.6, color: '#6b7280' }}>
-              Emotional Journey Score
+              {t('kpi.emotionalJourneyScore')}
             </div>
             <EmotionLineChart phases={phases} project={project} />
           </div>
 
           <ListCard
             icon={<AlertTriangle size={project.fontSize * 0.9} />}
-            title="Top 5 Pain Points"
+            title={t('kpi.topPainPoints')}
             items={kpi.topPainPoints}
             accent="#c0272d"
             project={project}
           />
           <ListCard
             icon={<ThumbsUp size={project.fontSize * 0.9} />}
-            title="Top Stärken"
+            title={t('kpi.topStrengths')}
             items={kpi.topStrengths}
             accent="#1f9d55"
             project={project}
           />
           <ListCard
             icon={<Zap size={project.fontSize * 0.9} />}
-            title="Größte Hebel"
+            title={t('kpi.topLevers')}
             items={kpi.topLevers}
             accent={project.colors.secondary}
             project={project}

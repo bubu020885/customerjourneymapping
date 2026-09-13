@@ -12,10 +12,12 @@ import { PresentationView } from './components/PresentationView'
 import { PresentationSlide, KpiSummarySlide } from './components/PresentationSlide'
 import { generateExport, generatePresentationExport, tryAutoDownload, type ExportFormat, type ExportResult } from './utils/export'
 import { generateJsonExport, importJson } from './utils/jsonIO'
+import { useLang } from './i18n'
 
 type Tab = 'phase' | 'global'
 
 function App() {
+  const { t } = useLang()
   const {
     project,
     phases,
@@ -55,7 +57,7 @@ function App() {
       setExportResult(result)
     } catch (err) {
       console.error(err)
-      alert('Export fehlgeschlagen: ' + (err as Error).message)
+      alert(t('app.exportFailed') + (err as Error).message)
     } finally {
       setExporting(false)
     }
@@ -77,7 +79,7 @@ function App() {
       const data = await importJson(file)
       loadData(data)
     } catch (err) {
-      alert('JSON konnte nicht geladen werden: ' + (err as Error).message)
+      alert(t('app.jsonImportFailed') + (err as Error).message)
     }
   }
 
@@ -100,7 +102,7 @@ function App() {
       setExportResult(result)
     } catch (err) {
       console.error(err)
-      alert('Export fehlgeschlagen: ' + (err as Error).message)
+      alert(t('app.exportFailed') + (err as Error).message)
     } finally {
       setPresentationExporting(false)
     }
@@ -141,13 +143,13 @@ function App() {
               onClick={() => setTab('phase')}
               className={`flex-1 py-2.5 text-sm font-semibold ${tab === 'phase' ? 'text-[#132638] border-b-2 border-[#1A7272]' : 'text-gray-400'}`}
             >
-              Phase bearbeiten
+              {t('app.tabPhase')}
             </button>
             <button
               onClick={() => setTab('global')}
               className={`flex-1 py-2.5 text-sm font-semibold ${tab === 'global' ? 'text-[#132638] border-b-2 border-[#1A7272]' : 'text-gray-400'}`}
             >
-              Globale Einstellungen
+              {t('app.tabGlobal')}
             </button>
           </div>
           <div className="flex-1 min-h-0">

@@ -1,8 +1,10 @@
 import { Users } from 'lucide-react'
 import type { ProjectSettings } from '../types'
 import { HEADER_H } from '../layoutConstants'
+import { useLang } from '../i18n'
 
 export function CanvasHeader({ project }: { project: ProjectSettings }) {
+  const { t } = useLang()
   return (
     <div
       className="flex items-stretch gap-4 px-5 shrink-0"
@@ -37,7 +39,7 @@ export function CanvasHeader({ project }: { project: ProjectSettings }) {
         <Users size={project.fontSize * 1.8} style={{ color: project.colors.primary }} className="shrink-0" />
         <div className="min-w-0">
           <div className="font-bold uppercase truncate" style={{ fontSize: project.fontSize * 0.8, color: project.colors.primary }}>
-            {project.client || 'Testpersona'}
+            {project.client || t('canvas.testPersona')}
           </div>
           <div className="line-clamp-2" style={{ fontSize: project.fontSize * 0.62, color: '#6b7280', lineHeight: 1.25 }}>
             {project.persona}

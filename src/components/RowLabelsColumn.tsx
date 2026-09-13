@@ -2,6 +2,7 @@ import { Target, Contact, Heart, Star, AlertTriangle, Rocket, CheckCircle2, Laye
 import type { ProjectSettings } from '../types'
 import { DEFAULT_SIDEBAR_TEXT_COLOR } from '../types'
 import { LABEL_COL_W, computeRowBands } from '../layoutConstants'
+import { useLang } from '../i18n'
 
 const ICONS: Record<string, React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>> = {
   goals: Target,
@@ -14,6 +15,7 @@ const ICONS: Record<string, React.ComponentType<{ size?: number; className?: str
 }
 
 export function RowLabelsColumn({ project }: { project: ProjectSettings }) {
+  const { t } = useLang()
   const bands = computeRowBands(project)
   const textColor = project.colors.sidebarText ?? DEFAULT_SIDEBAR_TEXT_COLOR
 
@@ -32,7 +34,7 @@ export function RowLabelsColumn({ project }: { project: ProjectSettings }) {
         }}
       >
         <Layers size={project.fontSize * 1.1} />
-        PHASEN
+        {t('rowLabel.phases')}
       </div>
       {bands.dataBands.map((band) => {
         const Icon = ICONS[band.key] ?? Target
@@ -47,7 +49,7 @@ export function RowLabelsColumn({ project }: { project: ProjectSettings }) {
               style={{ fontSize: project.fontSize * 0.72, color: textColor }}
             >
               <Icon size={project.fontSize * 0.95} style={{ color: project.colors.accent }} />
-              <span>{band.label}</span>
+              <span>{t(`rowLabel.${band.key}`)}</span>
             </div>
           </div>
         )

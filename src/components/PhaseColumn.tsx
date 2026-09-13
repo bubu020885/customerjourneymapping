@@ -4,6 +4,7 @@ import { GripVertical, Image as ImageIcon, X } from 'lucide-react'
 import type { Phase, ProjectSettings } from '../types'
 import { EMOTION_META, DEFAULT_BODY_TEXT_COLOR, DEFAULT_PAIN_POINT_COLOR, DEFAULT_OPPORTUNITY_COLOR } from '../types'
 import { computeRowBands } from '../layoutConstants'
+import { useLang } from '../i18n'
 
 function hexToRgba(hex: string, alpha: number): string {
   const clean = hex.replace('#', '')
@@ -46,6 +47,7 @@ export function PhaseColumn({
   onDelete: () => void
   editable: boolean
 }) {
+  const { t } = useLang()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: phase.id })
   const rawBands = computeRowBands(project)
   const offset = rawBands.rowsAreaTop
@@ -134,7 +136,7 @@ export function PhaseColumn({
             onClick={(e) => e.stopPropagation()}
             className="absolute z-30 left-1 flex items-center justify-center rounded opacity-0 group-hover:opacity-80 hover:!opacity-100 text-white bg-black/25 cursor-grab active:cursor-grabbing"
             style={{ top: bands.phaseHeaderBand.top + 2, width: 20, height: 20 }}
-            title="Verschieben"
+            title={t('phaseColumn.move')}
           >
             <GripVertical size={13} />
           </button>
@@ -146,7 +148,7 @@ export function PhaseColumn({
             }}
             className="absolute z-30 right-1 flex items-center justify-center rounded opacity-0 group-hover:opacity-80 hover:!opacity-100 text-white bg-black/25"
             style={{ top: bands.phaseHeaderBand.top + 2, width: 20, height: 20 }}
-            title="Phase löschen"
+            title={t('phaseColumn.delete')}
           >
             <X size={13} />
           </button>
@@ -168,7 +170,7 @@ export function PhaseColumn({
         <div className="flex flex-col items-center gap-0.5">
           <span style={{ fontSize: project.fontSize * 1.6 }}>{emo.emoji}</span>
           <span className="font-semibold text-center" style={{ fontSize: project.fontSize * 0.7, color: emo.color }}>
-            {emo.label}
+            {t(`emotion.${phase.emotion}`)}
           </span>
         </div>
       </Cell>

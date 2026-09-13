@@ -3,6 +3,7 @@ import { Image as ImageIcon, Target, Waypoints, AlertTriangle, Rocket, CheckCirc
 import type { Phase, ProjectSettings, KpiData } from '../types'
 import { EMOTION_META, DEFAULT_BODY_TEXT_COLOR, DEFAULT_PAIN_POINT_COLOR, DEFAULT_OPPORTUNITY_COLOR } from '../types'
 import { CANVAS_W, CANVAS_H } from '../layoutConstants'
+import { useLang } from '../i18n'
 
 function hexToRgba(hex: string, alpha: number): string {
   const clean = hex.replace('#', '')
@@ -16,11 +17,12 @@ function hexToRgba(hex: string, alpha: number): string {
 }
 
 function PhotoArea({ photos }: { photos: string[] }) {
+  const { t } = useLang()
   if (photos.length === 0) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl bg-gray-100 text-gray-300">
         <ImageIcon size={56} />
-        <span className="text-base font-medium">Keine Fotos hinterlegt</span>
+        <span className="text-base font-medium">{t('slide.noPhotos')}</span>
       </div>
     )
   }
@@ -166,6 +168,7 @@ function ScoreDisplay({
 }
 
 function InfoSlideBody({ phase }: { phase: Phase }) {
+  const { t } = useLang()
   const bodyColor = phase.bodyTextColor ?? DEFAULT_BODY_TEXT_COLOR
   return (
     <div className="flex flex-1 min-h-0 gap-8 px-14 py-8">
@@ -175,7 +178,7 @@ function InfoSlideBody({ phase }: { phase: Phase }) {
       <div className="flex min-h-0 flex-1 flex-col gap-6">
         <div className="min-h-0 flex-1 overflow-hidden rounded-xl px-5 py-4" style={{ background: hexToRgba(phase.color, 0.06) }}>
           <SectionHeading icon={<Target size={20} />} color={phase.color}>
-            Ziele &amp; Bedürfnisse
+            {t('slide.goals')}
           </SectionHeading>
           <div className="mt-2">
             <List items={phase.goals} fontSize={19} color={bodyColor} bullet="•" />
@@ -183,7 +186,7 @@ function InfoSlideBody({ phase }: { phase: Phase }) {
         </div>
         <div className="min-h-0 flex-1 overflow-hidden rounded-xl px-5 py-4" style={{ background: hexToRgba(phase.color, 0.06) }}>
           <SectionHeading icon={<Waypoints size={20} />} color={phase.color}>
-            Touchpoints
+            {t('slide.touchpoints')}
           </SectionHeading>
           <div className="mt-2">
             <List items={phase.touchpoints} fontSize={19} color={bodyColor} bullet="•" />
@@ -195,13 +198,14 @@ function InfoSlideBody({ phase }: { phase: Phase }) {
 }
 
 function InsightsSlideBody({ phase, project }: { phase: Phase; project: ProjectSettings }) {
+  const { t } = useLang()
   return (
     <div className="flex flex-1 min-h-0 gap-8 px-14 py-8">
-      <ScoreDisplay score={phase.score} label="Erlebnis-Score" starColor={phase.accent} numberColor={phase.color} tintColor={phase.color} />
+      <ScoreDisplay score={phase.score} label={t('slide.experienceScore')} starColor={phase.accent} numberColor={phase.color} tintColor={phase.color} />
       <div className="grid min-h-0 flex-1 grid-cols-3 gap-6">
         <div className="min-h-0 overflow-hidden rounded-xl border-t-4 px-4 py-4" style={{ borderColor: phase.painPointColor ?? DEFAULT_PAIN_POINT_COLOR, background: '#fafafa' }}>
           <SectionHeading icon={<AlertTriangle size={20} />} color={phase.painPointColor ?? DEFAULT_PAIN_POINT_COLOR}>
-            Pain Points
+            {t('slide.painPoints')}
           </SectionHeading>
           <div className="mt-2">
             <List items={phase.painPoints} fontSize={17} color={phase.painPointColor ?? DEFAULT_PAIN_POINT_COLOR} bullet="✕" />
@@ -209,7 +213,7 @@ function InsightsSlideBody({ phase, project }: { phase: Phase; project: ProjectS
         </div>
         <div className="min-h-0 overflow-hidden rounded-xl border-t-4 px-4 py-4" style={{ borderColor: phase.opportunityColor ?? DEFAULT_OPPORTUNITY_COLOR, background: '#fafafa' }}>
           <SectionHeading icon={<Rocket size={20} />} color={phase.opportunityColor ?? DEFAULT_OPPORTUNITY_COLOR}>
-            Opportunities
+            {t('slide.opportunities')}
           </SectionHeading>
           <div className="mt-2">
             <List items={phase.opportunities} fontSize={17} color={phase.opportunityColor ?? DEFAULT_OPPORTUNITY_COLOR} bullet="✓" />
@@ -217,7 +221,7 @@ function InsightsSlideBody({ phase, project }: { phase: Phase; project: ProjectS
         </div>
         <div className="min-h-0 overflow-hidden rounded-xl border-t-4 px-4 py-4" style={{ borderColor: phase.recommendationColor ?? project.colors.secondary, background: '#fafafa' }}>
           <SectionHeading icon={<CheckCircle2 size={20} />} color={phase.recommendationColor ?? project.colors.secondary}>
-            Handlungsempfehlungen
+            {t('slide.recommendations')}
           </SectionHeading>
           <div className="mt-2">
             <List items={phase.recommendations} fontSize={17} color={phase.recommendationColor ?? project.colors.secondary} bullet="→" />
@@ -242,6 +246,7 @@ export const PresentationSlide = forwardRef<HTMLDivElement, SlideProps>(function
   { phase, project, part, phaseIndex, phaseCount, totalSlides, slideNumber },
   ref,
 ) {
+  const { t } = useLang()
   const emo = EMOTION_META[phase.emotion]
   return (
     <div
@@ -268,9 +273,9 @@ export const PresentationSlide = forwardRef<HTMLDivElement, SlideProps>(function
         </div>
         <div className="flex shrink-0 items-center gap-2 rounded-full bg-white/15 px-4 py-2">
           <span style={{ fontSize: 26 }}>{emo.emoji}</span>
-          <span className="text-base font-semibold">{emo.label}</span>
+          <span className="text-base font-semibold">{t(`emotion.${phase.emotion}`)}</span>
         </div>
-        <span className="shrink-0 rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold">Teil {part}/2</span>
+        <span className="shrink-0 rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold">{t('presentation.part', { p: part })}</span>
         {project.logo && <img src={project.logo} alt="" className="h-11 shrink-0 object-contain" />}
       </div>
 
@@ -281,7 +286,7 @@ export const PresentationSlide = forwardRef<HTMLDivElement, SlideProps>(function
         totalSlides={totalSlides}
         currentIndex={slideNumber}
         leftLabel={project.title}
-        rightLabel={`Phase ${phaseIndex + 1} / ${phaseCount} · Folie ${part}/2`}
+        rightLabel={t('presentation.phaseCounter', { i: phaseIndex + 1, n: phaseCount, p: part })}
       />
     </div>
   )
@@ -299,6 +304,7 @@ export const KpiSummarySlide = forwardRef<HTMLDivElement, KpiSlideProps>(functio
   { phases, kpi, project, totalSlides, slideNumber },
   ref,
 ) {
+  const { t } = useLang()
   const avgScore = phases.length ? phases.reduce((sum, p) => sum + p.score, 0) / phases.length : 0
   return (
     <div
@@ -320,7 +326,7 @@ export const KpiSummarySlide = forwardRef<HTMLDivElement, KpiSlideProps>(functio
           <Trophy size={28} />
         </span>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-4xl font-black leading-tight">Zusammenfassung</div>
+          <div className="truncate text-4xl font-black leading-tight">{t('presentation.summary')}</div>
           <div className="truncate text-lg opacity-80">{project.title}</div>
         </div>
         {project.logo && <img src={project.logo} alt="" className="h-11 shrink-0 object-contain" />}
@@ -329,7 +335,7 @@ export const KpiSummarySlide = forwardRef<HTMLDivElement, KpiSlideProps>(functio
       <div className="flex flex-1 min-h-0 flex-col gap-6 px-14 py-8">
         <div className="shrink-0 overflow-hidden rounded-xl px-6 py-5" style={{ background: hexToRgba(project.colors.primary, 0.06) }}>
           <SectionHeading icon={<Trophy size={20} />} color={project.colors.primary}>
-            {kpi.insightTitle || 'Overall Journey Insight'}
+            {kpi.insightTitle || t('slide.overallInsightFallback')}
           </SectionHeading>
           <p className="mt-2 leading-snug text-gray-700" style={{ fontSize: 19 }}>
             {kpi.insightText || '—'}
@@ -339,7 +345,7 @@ export const KpiSummarySlide = forwardRef<HTMLDivElement, KpiSlideProps>(functio
         <div className="flex min-h-0 flex-1 gap-8">
           <ScoreDisplay
             score={avgScore}
-            label="Erlebnis-Score (Ø)"
+            label={t('slide.avgExperienceScore')}
             starColor={project.colors.accent}
             numberColor={project.colors.primary}
             tintColor={project.colors.primary}
@@ -347,7 +353,7 @@ export const KpiSummarySlide = forwardRef<HTMLDivElement, KpiSlideProps>(functio
           <div className="grid min-h-0 flex-1 grid-cols-3 gap-6">
             <div className="min-h-0 overflow-hidden rounded-xl border-t-4 px-4 py-4" style={{ borderColor: '#c0272d', background: '#fafafa' }}>
               <SectionHeading icon={<AlertTriangle size={20} />} color="#c0272d">
-                Top Pain Points
+                {t('slide.topPainPoints')}
               </SectionHeading>
               <div className="mt-2">
                 <List items={kpi.topPainPoints} fontSize={17} color="#c0272d" bullet="✕" />
@@ -355,7 +361,7 @@ export const KpiSummarySlide = forwardRef<HTMLDivElement, KpiSlideProps>(functio
             </div>
             <div className="min-h-0 overflow-hidden rounded-xl border-t-4 px-4 py-4" style={{ borderColor: '#1f9d55', background: '#fafafa' }}>
               <SectionHeading icon={<ThumbsUp size={20} />} color="#1f9d55">
-                Top Stärken
+                {t('slide.topStrengths')}
               </SectionHeading>
               <div className="mt-2">
                 <List items={kpi.topStrengths} fontSize={17} color="#1f9d55" bullet="✓" />
@@ -363,7 +369,7 @@ export const KpiSummarySlide = forwardRef<HTMLDivElement, KpiSlideProps>(functio
             </div>
             <div className="min-h-0 overflow-hidden rounded-xl border-t-4 px-4 py-4" style={{ borderColor: project.colors.secondary, background: '#fafafa' }}>
               <SectionHeading icon={<Zap size={20} />} color={project.colors.secondary}>
-                Größte Hebel
+                {t('slide.topLevers')}
               </SectionHeading>
               <div className="mt-2">
                 <List items={kpi.topLevers} fontSize={17} color={project.colors.secondary} bullet="→" />
@@ -378,7 +384,7 @@ export const KpiSummarySlide = forwardRef<HTMLDivElement, KpiSlideProps>(functio
         totalSlides={totalSlides}
         currentIndex={slideNumber}
         leftLabel={project.title}
-        rightLabel="Zusammenfassung"
+        rightLabel={t('presentation.summary')}
       />
     </div>
   )

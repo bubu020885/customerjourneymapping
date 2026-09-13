@@ -10,6 +10,7 @@ import {
 } from 'react'
 import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
 import { CANVAS_W, CANVAS_H } from '../layoutConstants'
+import { useLang } from '../i18n'
 
 const MIN_ZOOM = 1
 const MAX_ZOOM = 4
@@ -17,6 +18,7 @@ const ZOOM_STEP = 0.25
 const DRAG_THRESHOLD = 4
 
 export function ScaledStage({ children }: { children: ReactNode }) {
+  const { t } = useLang()
   const outerRef = useRef<HTMLDivElement>(null)
   const [fitScale, setFitScale] = useState(0.3)
   const [zoom, setZoom] = useState(1)
@@ -147,7 +149,7 @@ export function ScaledStage({ children }: { children: ReactNode }) {
           onClick={() => zoomBy(-ZOOM_STEP)}
           disabled={!canZoomOut}
           className="p-1.5 rounded hover:bg-gray-100 text-gray-600 disabled:opacity-30 disabled:hover:bg-transparent"
-          title="Verkleinern"
+          title={t('stage.zoomOut')}
         >
           <ZoomOut size={16} />
         </button>
@@ -156,7 +158,7 @@ export function ScaledStage({ children }: { children: ReactNode }) {
           onClick={() => zoomBy(ZOOM_STEP)}
           disabled={!canZoomIn}
           className="p-1.5 rounded hover:bg-gray-100 text-gray-600 disabled:opacity-30 disabled:hover:bg-transparent"
-          title="Vergrößern"
+          title={t('stage.zoomIn')}
         >
           <ZoomIn size={16} />
         </button>
@@ -165,7 +167,7 @@ export function ScaledStage({ children }: { children: ReactNode }) {
           onClick={resetView}
           disabled={zoom === 1}
           className="p-1.5 rounded hover:bg-gray-100 text-gray-600 disabled:opacity-30 disabled:hover:bg-transparent"
-          title="Ansicht einpassen"
+          title={t('stage.fitView')}
         >
           <Maximize2 size={16} />
         </button>
@@ -173,7 +175,7 @@ export function ScaledStage({ children }: { children: ReactNode }) {
 
       {zoom > 1 && (
         <div className="absolute bottom-3 left-3 rounded-md bg-black/60 text-white text-[11px] px-2 py-1 pointer-events-none">
-          Ziehen oder Scrollen zum Verschieben · Strg + Scrollen zum Zoomen
+          {t('stage.panHint')}
         </div>
       )}
     </div>

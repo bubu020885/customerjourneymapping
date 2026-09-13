@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type DragEvent } from 'react'
+import { useLang } from '../i18n'
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -123,8 +124,10 @@ export function Select<T extends string>({
   )
 }
 
-export function ImageUpload({ value, onChange, label = 'Bild hochladen oder hierher ziehen' }: { value: string; onChange: (v: string) => void; label?: string }) {
+export function ImageUpload({ value, onChange, label }: { value: string; onChange: (v: string) => void; label?: string }) {
+  const { t } = useLang()
   const [isDragging, setIsDragging] = useState(false)
+  const resolvedLabel = label ?? t('ui.uploadImageDefault')
 
   function readFile(file: File) {
     if (!file.type.startsWith('image/')) return
@@ -159,12 +162,12 @@ export function ImageUpload({ value, onChange, label = 'Bild hochladen oder hier
           isDragging ? 'border-amber-400 bg-amber-50 text-amber-700' : 'border-gray-300 text-gray-500 hover:bg-gray-50'
         }`}
       >
-        {isDragging ? 'Bild hier loslassen' : label}
+        {isDragging ? t('ui.dropImageHere') : resolvedLabel}
         <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
       </label>
       {value && (
         <button onClick={() => onChange('')} className="text-xs text-gray-400 hover:text-red-500">
-          Entfernen
+          {t('ui.remove')}
         </button>
       )}
     </div>
@@ -180,6 +183,7 @@ export function PhotoGridUpload({
   onChange: (photos: string[]) => void
   max?: number
 }) {
+  const { t } = useLang()
   const [dragIndex, setDragIndex] = useState<number | null>(null)
 
   function readFile(file: File, slot: number) {
@@ -222,7 +226,7 @@ export function PhotoGridUpload({
               <button
                 onClick={() => removeAt(i)}
                 className="absolute top-1 right-1 rounded-full bg-black/60 text-white p-0.5 opacity-0 group-hover:opacity-100"
-                title="Foto entfernen"
+                title={t('ui.removePhoto')}
               >
                 <span className="block px-1 text-xs leading-4">✕</span>
               </button>
@@ -239,7 +243,7 @@ export function PhotoGridUpload({
                 dragIndex === i ? 'border-amber-400 bg-amber-50 text-amber-700' : 'border-gray-300 text-gray-400 hover:bg-gray-50'
               }`}
             >
-              {dragIndex === i ? 'Loslassen' : 'Foto hinzufügen'}
+              {dragIndex === i ? t('ui.dropHere') : t('ui.addPhoto')}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e, i)} />
             </label>
           )}

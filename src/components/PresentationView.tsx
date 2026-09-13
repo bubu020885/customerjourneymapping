@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, X, FileText, Download } from 'lucide-react'
 import type { Phase, ProjectSettings, KpiData } from '../types'
 import { CANVAS_W, CANVAS_H } from '../layoutConstants'
 import { PresentationSlide, KpiSummarySlide } from './PresentationSlide'
+import { useLang } from '../i18n'
 
 export function PresentationView({
   phases,
@@ -23,6 +24,7 @@ export function PresentationView({
   onExportPdf: () => void
   exporting: boolean
 }) {
+  const { t } = useLang()
   const outerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(0.3)
 
@@ -60,24 +62,24 @@ export function PresentationView({
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-gray-900">
       <div className="flex shrink-0 items-center gap-2 px-4 py-2.5 bg-gray-800 text-white">
-        <span className="font-bold mr-2">Präsentationsmodus</span>
+        <span className="font-bold mr-2">{t('presentation.mode')}</span>
 
         <button
           onClick={() => onSlideIndexChange(Math.max(0, slideIndex - 1))}
           disabled={slideIndex === 0}
           className="flex items-center gap-1 rounded-md border border-white/20 px-2.5 py-1.5 text-sm hover:bg-white/10 disabled:opacity-30"
-          title="Vorherige Folie"
+          title={t('presentation.prevSlide')}
         >
           <ChevronLeft size={16} />
         </button>
         <span className="text-sm tabular-nums w-44 text-center text-white/80">
-          {isKpiSlide ? 'Zusammenfassung' : `Phase ${phaseIndex + 1} / ${phases.length} · Folie ${part}/2`}
+          {isKpiSlide ? t('presentation.summary') : t('presentation.phaseCounter', { i: phaseIndex + 1, n: phases.length, p: part! })}
         </span>
         <button
           onClick={() => onSlideIndexChange(Math.min(totalSlides - 1, slideIndex + 1))}
           disabled={slideIndex === totalSlides - 1}
           className="flex items-center gap-1 rounded-md border border-white/20 px-2.5 py-1.5 text-sm hover:bg-white/10 disabled:opacity-30"
-          title="Nächste Folie"
+          title={t('presentation.nextSlide')}
         >
           <ChevronRight size={16} />
         </button>
@@ -88,24 +90,24 @@ export function PresentationView({
           disabled={exporting}
           onClick={onExportPdf}
           className="flex items-center gap-1 rounded-md border border-white/20 px-2.5 py-1.5 text-sm hover:bg-white/10 disabled:opacity-50"
-          title="Präsentation als PDF exportieren"
+          title={t('presentation.exportPdf')}
         >
-          <FileText size={16} /> Als PDF exportieren
+          <FileText size={16} /> {t('presentation.exportPdf')}
         </button>
         {exporting && (
           <span className="flex items-center gap-1 text-xs text-amber-300">
-            <Download size={14} className="animate-bounce" /> Export läuft…
+            <Download size={14} className="animate-bounce" /> {t('presentation.exporting')}
           </span>
         )}
 
         <div className="flex-1" />
-        <span className="text-xs text-white/40 mr-2">Steuerung: ← → · Esc zum Beenden</span>
+        <span className="text-xs text-white/40 mr-2">{t('presentation.controlsHint')}</span>
         <button
           onClick={onExit}
           className="flex items-center gap-1 rounded-md bg-white/10 px-3 py-1.5 text-sm font-medium hover:bg-white/20"
-          title="Präsentation beenden"
+          title={t('presentation.exit')}
         >
-          <X size={16} /> Beenden
+          <X size={16} /> {t('presentation.exit')}
         </button>
       </div>
 
@@ -132,7 +134,7 @@ export function PresentationView({
           <button
             onClick={() => onSlideIndexChange(slideIndex - 1)}
             className="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-            title="Vorherige Folie"
+            title={t('presentation.prevSlide')}
           >
             <ChevronLeft size={22} />
           </button>
@@ -141,7 +143,7 @@ export function PresentationView({
           <button
             onClick={() => onSlideIndexChange(slideIndex + 1)}
             className="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-            title="Nächste Folie"
+            title={t('presentation.nextSlide')}
           >
             <ChevronRight size={22} />
           </button>

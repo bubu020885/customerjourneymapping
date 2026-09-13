@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLang, type Lang } from '../i18n'
 
 const LW_URL = 'https://leisureworkspace.com'
 
@@ -24,7 +25,27 @@ export function LwLogoIcon({ size = 34 }: { size?: number }) {
   )
 }
 
+function LangToggle() {
+  const { lang, setLang } = useLang()
+  return (
+    <div className="flex shrink-0 items-center overflow-hidden rounded-full border-[1.5px] border-white/20" role="group">
+      {(['de', 'en'] as Lang[]).map((l) => (
+        <button
+          key={l}
+          onClick={() => setLang(l)}
+          className={`px-2.5 py-1 text-[11px] font-bold transition-colors ${
+            lang === l ? 'bg-[#1A7272] text-white' : 'bg-transparent text-white/50 hover:text-white/80'
+          }`}
+        >
+          {l.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 function InfoModal({ onClose }: { onClose: () => void }) {
+  const { t } = useLang()
   return (
     <div
       className="fixed inset-0 z-[9100] flex items-center justify-center bg-[rgba(19,38,56,0.55)] p-5"
@@ -40,8 +61,8 @@ function InfoModal({ onClose }: { onClose: () => void }) {
             <LwLogoIcon size={40} />
           </div>
           <div>
-            <div className="text-[17px] font-extrabold leading-tight tracking-[-0.3px]">Customer Journey Mapping Tool</div>
-            <div className="text-[11px] font-normal text-white/50">LeisureWorkspace · Amusement Business Support</div>
+            <div className="text-[17px] font-extrabold leading-tight tracking-[-0.3px]">{t('header.modalTitle')}</div>
+            <div className="text-[11px] font-normal text-white/50">LeisureWorkspace · {t('header.tagline')}</div>
           </div>
           <button
             onClick={onClose}
@@ -55,30 +76,24 @@ function InfoModal({ onClose }: { onClose: () => void }) {
           <div className="mb-4">
             <div className="mb-1.5 flex items-center gap-1.5 text-[9.5px] font-bold uppercase tracking-[0.8px] text-[#1A7272]">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#F5C518]" />
-              Über dieses Tool
+              {t('header.about')}
             </div>
-            <p className="text-[13px] leading-relaxed text-[#5A6A7A]">
-              Bilde die Customer Journey deiner Gäste Phase für Phase ab – mit Zielen, Touchpoints, Emotionen,
-              Erlebnis-Score, Pain Points, Opportunities und Handlungsempfehlungen. Im Präsentationsmodus stellst du
-              die Ergebnisse direkt im 16:9-Format vor und exportierst alles als PNG, JPG oder PDF.
-            </p>
+            <p className="text-[13px] leading-relaxed text-[#5A6A7A]">{t('header.aboutText')}</p>
           </div>
           <div>
             <div className="mb-1.5 flex items-center gap-1.5 text-[9.5px] font-bold uppercase tracking-[0.8px] text-[#1A7272]">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#F5C518]" />
-              Über den Macher
+              {t('header.aboutMaker')}
             </div>
             <p className="text-[13px] leading-relaxed text-[#5A6A7A]">
-              <strong className="text-[#132638]">Stefan Burian</strong> — über 20 Jahre Erfahrung in der
-              Freizeitbranche: Betrieb, Personalentwicklung und Guest Experience. LeisureWorkspace macht dieses
-              Praxiswissen als digitale Tools für andere Fachleute zugänglich.
+              <strong className="text-[#132638]">Stefan Burian</strong> — {t('header.aboutMakerText')}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2.5 border-t border-[#D0CBC0] px-6 py-3.5">
           <span className="mr-auto text-[11px] text-[#5A6A7A]">
-            <strong className="text-[#132638]">Leisure</strong>Workspace · Amusement Business Support
+            <strong className="text-[#132638]">Leisure</strong>Workspace · {t('header.tagline')}
           </span>
           <a
             href={LW_URL}
@@ -86,7 +101,7 @@ function InfoModal({ onClose }: { onClose: () => void }) {
             rel="noopener"
             className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-[#F5C518] px-4 py-2 text-xs font-bold text-[#132638] transition-[filter] hover:brightness-95"
           >
-            Alle Tools ↗
+            {t('header.footerAllTools')}
           </a>
         </div>
       </div>
@@ -95,6 +110,7 @@ function InfoModal({ onClose }: { onClose: () => void }) {
 }
 
 export function LwHeader() {
+  const { t } = useLang()
   const [infoOpen, setInfoOpen] = useState(false)
 
   return (
@@ -109,23 +125,23 @@ export function LwHeader() {
             <div className="text-[13px] font-extrabold tracking-[-0.3px] text-white">
               Leisure<span className="text-[#1A7272]">Workspace</span>
             </div>
-            <div className="text-[9.5px] font-normal text-white/45">Amusement Business Support</div>
+            <div className="text-[9.5px] font-normal text-white/45">{t('header.tagline')}</div>
           </div>
         </a>
 
         <div className="h-7 w-px shrink-0 bg-white/15" />
 
-        <span className="mr-auto truncate text-[13px] font-semibold tracking-[-0.2px] text-white/85">
-          Customer Journey Mapping
-        </span>
+        <span className="mr-auto truncate text-[13px] font-semibold tracking-[-0.2px] text-white/85">{t('header.title')}</span>
 
         <button
           onClick={() => setInfoOpen(true)}
-          title="Info"
+          title={t('header.info')}
           className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-white/25 text-[13px] font-bold text-white/70 transition-colors hover:border-[#F5C518] hover:text-[#F5C518]"
         >
           i
         </button>
+
+        <LangToggle />
 
         <a
           href={LW_URL}
@@ -133,7 +149,7 @@ export function LwHeader() {
           rel="noopener"
           className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-[#F5C518] px-3.5 py-1.5 text-[11.5px] font-bold text-[#132638] no-underline transition-[filter] hover:brightness-95"
         >
-          ↗ Alle Tools
+          {t('header.allTools')}
         </a>
       </header>
 
