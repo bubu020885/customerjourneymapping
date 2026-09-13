@@ -1,0 +1,43 @@
+name: Deploy to LeisureWorkspace (FTP)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "'list' inspects the FTP root read-only, 'deploy' uploads the build"
+        required: true
+        default: list
+        type: choice
+        options:
+          - list
+          - deploy
+      remote_dir:
+        description: "Target directory on the FTP server (used in deploy mode)"
+        required: false
+        default: /customerjourneymapper/
+
+jobs:
+  ftp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build:single-file
+      - run: cp public/favicon.svg dist-artifact/favicon.svg
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: List FTP root (read-only)
+        if: inputs.mode == 'list'
+        run: |
+          lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" "${{ secrets.FTP_SERVER }}" \
+            -e "set ftp:ssl-force true; set ssl:verify-certificate no; cls -1 --classify; bye"
+
+      - name: Upload build via FTP
+        if: inputs.mode == 'deploy'
+        run: |
+          lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" "${{ secrets.FTP_SERVER }}" \
+            -e "set ftp:ssl-force true; set ssl:verify-certificate no; mkdir -p '${{ inputs.remote_dir }}'; mirror -R dist-artifact/ '${{ inputs.remote_dir }}'; bye"
